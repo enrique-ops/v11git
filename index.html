@@ -6,10 +6,19 @@
     <title>SKUscale - Stop Guessing, Start Scaling</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } .recommended-plan { transform: scale(1.05 ); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 2px #4f46e5; } </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .recommended-plan {
+            transform: scale(1.05 );
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 2px #4f46e5;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
+
     <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -24,6 +33,7 @@
             </div>
         </div>
     </header>
+
     <!-- Hero Section -->
     <main class="container mx-auto px-6 py-16 md:py-24 text-center">
         <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang-text='{"en": "Stop Guessing, <span class=\"text-indigo-600\">Start Scaling.</span>", "es": "Deja de Adivinar, <span class=\"text-indigo-600\">Empieza a Escalar.</span>"}'></h2>
@@ -32,6 +42,22 @@
             <button data-netlify-identity-button class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105" data-lang-text='{"en": "Get Your Free SKU Classification", "es": "Obtén tu Clasificación Gratis"}'></button>
         </div>
     </main>
+
+    <!-- Problem/Solution Section -->
+    <section class="py-16 md:py-24">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang-text='{"en": "The SKU Classification System Used by 8-Figure Brands", "es": "El Sistema de Clasificación de SKUs que usan las Grandes Marcas"}'></h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-green-500" data-lang-text='{"en":"Winners", "es":"Ganadores"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"High-profit, high-volume stars. <b>Action:</b> Scale them aggressively.", "es":"Alta rentabilidad y alto volumen. <b>Acción:</b> Escálalos de forma agresiva."}'></p></div>
+                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-blue-500" data-lang-text='{"en":"Potentials", "es":"Potenciales"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"High-profit, low-volume gems. <b>Action:</b> Increase their visibility.", "es":"Alta rentabilidad y bajo volumen. <b>Acción:</b> Aumenta su visibilidad."}'></p></div>
+                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-red-500" data-lang-text='{"en":"Losers", "es":"Perdedores"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"Low-profit products that drain your budget. <b>Action:</b> Reduce their spend.", "es":"Productos que drenan tu presupuesto. <b>Acción:</b> Reduce su inversión."}'></p></div>
+                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-gray-500" data-lang-text='{"en":"Sleepers", "es":"Durmientes"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"Dead-weight products. <b>Action:</b> Exclude them from campaigns.", "es":"Productos de peso muerto. <b>Acción:</b> Exclúyelos de las campañas."}'></p></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Pricing Section -->
     <section id="pricing" class="bg-white py-16 md:py-24">
         <div class="container mx-auto px-6">
@@ -48,22 +74,24 @@
                     <button data-netlify-identity-button class="mt-8 w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700" data-lang-text='{"en": "Start for Free", "es": "Empieza Gratis"}'></button>
                 </div>
                 <!-- Growth Plan -->
-                <div class="bg-white border-2 border-indigo-600 p-8 rounded-lg w-full max-w-md text-center recommended-plan">
+                <div class="bg-white p-8 rounded-lg w-full max-w-md text-center recommended-plan">
                     <span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang-text='{"en": "Most Popular", "es": "Más Popular"}'></span>
                     <h4 class="text-2xl font-bold text-indigo-600">GROWTH</h4>
-                    <p class="text-5xl font-extrabold my-4">$100<span class="text-base font-medium text-gray-500">/mo</span></p>
+                    <p class="text-5xl font-extrabold my-4"><span data-lang-text='{"en": "$100", "es": "100€"}'></span><span class="text-base font-medium text-gray-500" data-lang-text='{"en": "/mo", "es": "/mes"}'></span></p>
                     <p class="text-gray-600 h-24" data-lang-text='{"en": "Perfect for hands-on teams. Get automated weekly classifications to continuously optimize your ad spend and strategy.", "es": "Perfecto para equipos que toman el control. Obtén clasificaciones semanales para optimizar continuamente tu inversión y estrategia."}'></p>
-                    <button data-netlify-identity-button class="mt-8 w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang-text='{"en": "Choose Growth", "es": "Elegir Growth"}'></button>
+                    <a href="URL_DEL_PAGO_GROWTH" class="mt-8 block w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang-text='{"en": "Choose Growth", "es": "Elegir Growth"}'></a>
                 </div>
             </div>
         </div>
     </section>
+
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-6 text-center">
             <p>&copy; 2025 SKUscale. All rights reserved.</p>
         </div>
     </footer>
+
     <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
         function setupEventListeners( ) {
@@ -74,9 +102,9 @@
             function setLanguage(lang) {
                 translatableElements.forEach(el => {
                     try {
-                        const texts = JSON.parse(el.dataset.langText);
+                        const texts = JSON.parse(el.dataset.langText.replace(/'/g, '"'));
                         el.innerHTML = texts[lang];
-                    } catch (e) { console.error('Failed to parse lang-text JSON:', el.dataset.langText); }
+                    } catch (e) { console.error('Failed to parse lang-text JSON:', el.dataset.langText, e); }
                 });
                 if (lang === 'es') {
                     langEsBtn.classList.add('text-indigo-600'); langEsBtn.classList.remove('text-gray-400');
@@ -92,7 +120,9 @@
             if (langEnBtn) langEnBtn.addEventListener('click', () => setLanguage('en'));
             if (langEsBtn) langEsBtn.addEventListener('click', () => setLanguage('es'));
             
-            setLanguage('en'); // Set default language on load
+            // Set default language based on browser, fallback to 'en'
+            const userLang = navigator.language || navigator.userLanguage;
+            setLanguage(userLang.startsWith('es') ? 'es' : 'en');
 
             if (window.netlifyIdentity) {
                 window.netlifyIdentity.on('init', user => {
@@ -113,3 +143,4 @@
     </script>
 </body>
 </html>
+
