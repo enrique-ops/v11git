@@ -1,39 +1,42 @@
-// Importa la librería 'pg'
 const { Pool } = require('pg');
 
-// La función principal que Netlify ejecutará
 exports.handler = async (event, context) => {
-  
-  console.log("--- Function save-user-data invoked ---");
+  console.log("--- V12: Anti-Silent-Fail Function Invoked ---");
+
+  let pool; // Definimos pool aquí para poder cerrarlo en el finally
 
   try {
     if (!context.clientContext || !context.clientContext.user) {
-      console.error("FATAL: Unauthorized access attempt. No user context found.");
+      console.error("FATAL: Unauthorized access. No user context.");
       return { statusCode: 401, body: JSON.stringify({ message: 'Unauthorized' }) };
     }
     const user = context.clientContext.user;
-    console.log(`User authenticated: ${user.email}`);
+    console.log(`User Authenticated: ${user.email}`);
 
-    // --- ¡¡¡EL CAMBIO CLAVE ESTÁ AQUÍ!!! ---
-    // Le decimos al código que use la "llave oficial" de Netlify en lugar de la nuestra.
     const connectionString = process.env.NETLIFY_DATABASE_URL;
-
     if (!connectionString) {
-        console.error("FATAL: NETLIFY_DATABASE_URL environment variable is not set.");
-        throw new Error("Database connection string is missing.");
+      console.error("FATAL: NETLIFY_DATABASE_URL is not set.");
+      throw new Error("Database connection string is missing.");
     }
-    console.log("NETLIFY_DATABASE_URL environment variable found.");
+    console.log("NETLIFY_DATABASE_URL found.");
 
-    // Usamos la "llave oficial" para crear la conexión
-    const pool = new Pool({ connectionString: connectionString });
-    console.log("Database pool created.");
+    // --- ¡¡¡EL CAMBIO CLAVE Y DEFINITIVO ESTÁ AQUÍ!!! ---
+    // Añadimos la configuración SSL requerida por Neon y otros proveedores en la nube.
+    // Esto soluciona los errores de conexión silenciosos.
+    pool = new Pool({
+      connectionString: connectionString,
+      ssl: {
+        rejectUnauthorized: false // Necesario para muchos entornos serverless como Netlify
+      }
+    });
+    console.log("Database pool created with SSL config.");
 
     const { adsId } = JSON.parse(event.body);
     if (!adsId) {
-      console.error("FATAL: Google Ads ID is missing in the request.");
+      console.error("FATAL: Google Ads ID missing.");
       return { statusCode: 400, body: JSON.stringify({ message: 'Google Ads ID is missing.' }) };
     }
-    console.log(`Data received from frontend: adsId = ${adsId}`);
+    console.log(`Data received: adsId = ${adsId}`);
 
     const query = `
       INSERT INTO users (netlify_id, email, full_name, google_ads_id)
@@ -56,11 +59,18 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error("--- CATCH BLOCK TRIGGERED: An error occurred ---");
-    console.error("Error details:", error);
+    console.error("--- CATCH BLOCK TRIGGERED ---");
+    console.error("Error details:", error.message); // Log más limpio del error
     return { 
       statusCode: 500, 
       body: JSON.stringify({ message: 'Internal Server Error', error: error.message }) 
     };
+  } finally {
+    // --- ¡NUEVO! ---
+    // Nos aseguramos de cerrar la conexión, lo que puede ayudar a evitar timeouts.
+    if (pool) {
+      await pool.end();
+      console.log("Database pool closed.");
+    }
   }
 };
