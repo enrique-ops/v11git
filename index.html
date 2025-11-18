@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKUscale - Stop Guessing, Start Scaling</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } .recommended-plan { transform: scale(1.05 ); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 2px #4f46e5; } </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/"><img src="/skuscale-logo.svg" alt="SKUscale Logo" class="h-8"></a>
+            <div class="flex items-center space-x-4">
+                <a href="#pricing" class="text-gray-600 hover:text-indigo-600" data-lang-text='{"en": "Pricing", "es": "Precios"}'>Pricing</a>
+                <div>
+                    <button id="lang-en" class="font-semibold text-indigo-600">EN</button>
+                    <span class="text-gray-300">/</span>
+                    <button id="lang-es" class="font-semibold text-gray-400 hover:text-indigo-600">ES</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Hero Section -->
+    <main class="container mx-auto px-6 py-16 md:py-24 text-center">
+        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang-text='{"en": "Stop Guessing, <span class=\"text-indigo-600\">Start Scaling.</span>", "es": "Deja de Adivinar, <span class=\"text-indigo-600\">Empieza a Escalar.</span>"}'></h2>
+        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang-text='{"en": "Get your first complete SKU classification for free and discover your most profitable (and unprofitable) products right now.", "es": "Obtén tu primera clasificación de SKUs completa, gratis, y descubre ahora mismo tus productos más rentables (y los que no lo son)."}'></p>
+        <div class="mt-8">
+            <button data-netlify-identity-button class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105" data-lang-text='{"en": "Get Your Free SKU Classification", "es": "Obtén tu Clasificación Gratis"}'></button>
+        </div>
+    </main>
+    <!-- Pricing Section -->
+    <section id="pricing" class="bg-white py-16 md:py-24">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang-text='{"en": "Start for Free, Then Choose Your Path to Scale", "es": "Empieza Gratis, Luego Elige tu Camino para Escalar"}'></h3>
+                <p class="mt-2 text-lg text-gray-600" data-lang-text='{"en": "Your first classification is on us. See the value for yourself, then subscribe to stay ahead.", "es": "Tu primera clasificación corre de nuestra cuenta. Comprueba el valor por ti mismo y luego suscríbete para mantener la ventaja."}'></p>
+            </div>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                <!-- Free Plan -->
+                <div class="bg-gray-100 border border-gray-200 p-8 rounded-lg w-full max-w-md text-center">
+                    <h4 class="text-2xl font-bold text-gray-900">FREE</h4>
+                    <p class="text-5xl font-extrabold my-4">$0</p>
+                    <p class="text-gray-600 h-24" data-lang-text='{"en": "A one-time, complete classification of your entire product catalog. Find your Winners, Losers, and hidden opportunities.", "es": "Una clasificación completa de todo tu catálogo de productos, por una sola vez. Encuentra tus Ganadores, Perdedores y oportunidades ocultas."}'></p>
+                    <button data-netlify-identity-button class="mt-8 w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700" data-lang-text='{"en": "Start for Free", "es": "Empieza Gratis"}'></button>
+                </div>
+                <!-- Growth Plan -->
+                <div class="bg-white border-2 border-indigo-600 p-8 rounded-lg w-full max-w-md text-center recommended-plan">
+                    <span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang-text='{"en": "Most Popular", "es": "Más Popular"}'></span>
+                    <h4 class="text-2xl font-bold text-indigo-600">GROWTH</h4>
+                    <p class="text-5xl font-extrabold my-4">$100<span class="text-base font-medium text-gray-500">/mo</span></p>
+                    <p class="text-gray-600 h-24" data-lang-text='{"en": "Perfect for hands-on teams. Get automated weekly classifications to continuously optimize your ad spend and strategy.", "es": "Perfecto para equipos que toman el control. Obtén clasificaciones semanales para optimizar continuamente tu inversión y estrategia."}'></p>
+                    <button data-netlify-identity-button class="mt-8 w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang-text='{"en": "Choose Growth", "es": "Elegir Growth"}'></button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 SKUscale. All rights reserved.</p>
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        function setupEventListeners( ) {
+            const langEnBtn = document.getElementById('lang-en');
+            const langEsBtn = document.getElementById('lang-es');
+            const translatableElements = document.querySelectorAll('[data-lang-text]');
+
+            function setLanguage(lang) {
+                translatableElements.forEach(el => {
+                    try {
+                        const texts = JSON.parse(el.dataset.langText);
+                        el.innerHTML = texts[lang];
+                    } catch (e) { console.error('Failed to parse lang-text JSON:', el.dataset.langText); }
+                });
+                if (lang === 'es') {
+                    langEsBtn.classList.add('text-indigo-600'); langEsBtn.classList.remove('text-gray-400');
+                    langEnBtn.classList.add('text-gray-400'); langEnBtn.classList.remove('text-indigo-600');
+                    document.documentElement.lang = 'es';
+                } else {
+                    langEnBtn.classList.add('text-indigo-600'); langEnBtn.classList.remove('text-gray-400');
+                    langEsBtn.classList.add('text-gray-400'); langEsBtn.classList.remove('text-indigo-600');
+                    document.documentElement.lang = 'en';
+                }
+            }
+
+            if (langEnBtn) langEnBtn.addEventListener('click', () => setLanguage('en'));
+            if (langEsBtn) langEsBtn.addEventListener('click', () => setLanguage('es'));
+            
+            setLanguage('en'); // Set default language on load
+
+            if (window.netlifyIdentity) {
+                window.netlifyIdentity.on('init', user => {
+                    if (user && window.location.pathname === '/') {
+                        window.location.href = '/dashboard';
+                    }
+                });
+                window.netlifyIdentity.on('login', user => {
+                    window.location.href = '/dashboard';
+                });
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupEventListeners);
+        } else {
+            setupEventListeners();
+        }
+    </script>
+</body>
+</html>

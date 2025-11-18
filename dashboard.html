@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKUscale Dashboard</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/"><img src="/skuscale-logo.svg" alt="SKUscale Logo" class="h-8"></a>
+            <div id="user-menu-container" class="relative hidden">
+                <button id="user-menu-button" class="flex items-center space-x-2">
+                    <span id="user-name" class="font-semibold text-gray-700"></span>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="user-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                    <div class="px-4 py-2 text-sm text-gray-700 border-b">
+                        <p class="font-bold">Signed in as</p>
+                        <p id="user-email" class="truncate"></p>
+                    </div>
+                    <button id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log out</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="welcome-name"></span>!</h2>
+        <p class="mt-2 text-lg text-gray-600">Let's get you set up. Just follow the steps below.</p>
+        <!-- Step 1: Submit Google Ads ID -->
+        <div id="step-1" class="mt-8 max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                <h3 class="ml-4 text-xl font-bold text-gray-800">Submit your Google Ads ID</h3>
+            </div>
+            <p class="text-gray-600 mb-4">Please provide your 10-digit Google Ads Customer ID (e.g., 123-456-7890 ). We need this to request read-only access to your account's performance data.</p>
+            <form id="onboarding-form">
+                <label for="ads-id" class="block text-sm font-medium text-gray-700">Google Ads Customer ID</label>
+                <input type="text" id="ads-id" name="ads-id" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="XXX-XXX-XXXX" required>
+                <button type="submit" class="mt-6 w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400">Submit ID</button>
+            </form>
+        </div>
+        <!-- Step 2: Confirmation -->
+        <div id="step-2" class="hidden mt-8 max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
+                <h3 class="ml-4 text-xl font-bold text-gray-800">ID Received! What's Next?</h3>
+            </div>
+            <div class="space-y-4 text-gray-600">
+                <p>Thank you! We've received your Google Ads ID. Our system is now preparing to connect to your account.</p>
+                <p><b class="text-gray-800">Important:</b> This onboarding process involves a "human in the loop" to ensure everything is set up correctly. Within the next 24 hours, we will send a <b>read-only access request</b> to your Google Ads account from our Manager Account (MCC).</p>
+                <p>Please keep an eye on your email for the access request notification from Google and accept it. You can also check back here for status updates.</p>
+            </div>
+        </div>
+    </main>
+    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        function initializeDashboard( ) {
+            const currentUser = window.netlifyIdentity.currentUser();
+            if (!currentUser) { window.location.href = '/'; return; }
+
+            const userMenuContainer = document.getElementById('user-menu-container');
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+            const userNameDisplay = document.getElementById('user-name');
+            const userEmailDisplay = document.getElementById('user-email');
+            const logoutButton = document.getElementById('logout-button');
+            const welcomeName = document.getElementById('welcome-name');
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const onboardingForm = document.getElementById('onboarding-form');
+            const adsIdInput = document.getElementById('ads-id');
+
+            const fullName = currentUser.user_metadata.full_name || currentUser.email.split('@')[0];
+            if (userNameDisplay) userNameDisplay.textContent = fullName;
+            if (userEmailDisplay) userEmailDisplay.textContent = currentUser.email;
+            if (welcomeName) welcomeName.textContent = fullName;
+            if (userMenuContainer) userMenuContainer.classList.remove('hidden');
+
+            if (localStorage.getItem('skuscale_id_submitted') === 'true') {
+                if (step1) step1.style.display = 'none';
+                if (step2) step2.style.display = 'block';
+            }
+
+            if (userMenuButton && userMenu) { userMenuButton.addEventListener('click', () => userMenu.classList.toggle('hidden')); }
+            if (logoutButton) { logoutButton.addEventListener('click', () => window.netlifyIdentity.logout()); }
+            window.netlifyIdentity.on('logout', () => { localStorage.removeItem('skuscale_id_submitted'); window.location.href = '/'; });
+
+            if (onboardingForm) {
+                onboardingForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const submitButton = onboardingForm.querySelector('button[type="submit"]');
+                    if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Saving...'; }
+
+                    const adsId = adsIdInput.value;
+                    const token = currentUser.token.access_token;
+
+                    try {
+                        const response = await fetch('/.netlify/functions/save-user-data', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                            body: JSON.stringify({ adsId: adsId })
+                        });
+                        if (!response.ok) { throw new Error(`Server error: ${response.statusText}`); }
+                        localStorage.setItem('skuscale_id_submitted', 'true');
+                        if (step1) step1.style.display = 'none';
+                        if (step2) step2.style.display = 'block';
+                    } catch (error) {
+                        console.error('Submission error:', error);
+                        alert('There was an error submitting your ID. Please try again.');
+                        if (submitButton) { submitButton.disabled = false; submitButton.textContent = 'Submit ID'; }
+                    }
+                });
+            }
+        }
+        window.netlifyIdentity.on('init', user => { if (user) { initializeDashboard(); } else { window.netlifyIdentity.on('login', () => initializeDashboard()); } });
+    </script>
+</body>
+</html>

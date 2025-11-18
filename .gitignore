@@ -1,0 +1,6 @@
+# Archivos de sistema y dependencias
+node_modules/
+.netlify/
+
+# Variables de entorno locales
+.env
