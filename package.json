@@ -1,7 +1,8 @@
 {
-  "name": "skuscale-functions",
+  "name": "skuscale-backend",
   "version": "1.0.0",
+  "description": "Backend functions for SKUscale",
   "dependencies": {
-    "pg": "^8.11.3"
+    "postgres": "^3.4.4"
   }
 }
