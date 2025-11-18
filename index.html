@@ -6,15 +6,10 @@
     <title>SKUscale - Stop Guessing, Start Scaling</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .recommended-plan {
-            transform: scale(1.05 );
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 2px #4f46e5;
-        }
+        .recommended-plan { transform: scale(1.05 ); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 2px #4f46e5; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -24,7 +19,8 @@
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="/"><img src="/skuscale-logo.svg" alt="SKUscale Logo" class="h-8"></a>
             <div class="flex items-center space-x-4">
-                <a href="#pricing" class="text-gray-600 hover:text-indigo-600" data-lang-text='{"en": "Pricing", "es": "Precios"}'>Pricing</a>
+                <a href="#pricing" class="text-gray-600 hover:text-indigo-600" data-lang="en">Pricing</a>
+                <a href="#pricing" class="text-gray-600 hover:text-indigo-600" data-lang="es" style="display:none;">Precios</a>
                 <div>
                     <button id="lang-en" class="font-semibold text-indigo-600">EN</button>
                     <span class="text-gray-300">/</span>
@@ -35,112 +31,120 @@
     </header>
 
     <!-- Hero Section -->
-    <main class="container mx-auto px-6 py-16 md:py-24 text-center">
-        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang-text='{"en": "Stop Guessing, <span class=\"text-indigo-600\">Start Scaling.</span>", "es": "Deja de Adivinar, <span class=\"text-indigo-600\">Empieza a Escalar.</span>"}'></h2>
-        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang-text='{"en": "Get your first complete SKU classification for free and discover your most profitable (and unprofitable) products right now.", "es": "Obtén tu primera clasificación de SKUs completa, gratis, y descubre ahora mismo tus productos más rentables (y los que no lo son)."}'></p>
+    <main class="container mx-auto px-6 pt-16 pb-12 md:pt-24 md:pb-20 text-center">
+        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang="en">Stop Guessing, <span class="text-indigo-600">Start Scaling.</span></h2>
+        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang="es" style="display:none;">Deja de Adivinar, <span class="text-indigo-600">Empieza a Escalar.</span></h2>
+        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang="en">Get your <b>first complete SKU classification for free</b> and discover your most profitable (and unprofitable) products right now.</p>
+        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang="es" style="display:none;">Consigue tu <b>primera clasificación de SKUs completa y gratis</b>, y descubre ahora mismo tus productos más rentables (y los que no lo son).</p>
         <div class="mt-8">
-            <button data-netlify-identity-button class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105" data-lang-text='{"en": "Get Your Free SKU Classification", "es": "Obtén tu Clasificación Gratis"}'></button>
+            <button class="login-trigger bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 text-lg" data-lang="en">Get Your Free SKU Classification</button>
+            <button class="login-trigger bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 text-lg" data-lang="es" style="display:none;">Consigue tu Clasificación Gratis</button>
         </div>
     </main>
 
-    <!-- Problem/Solution Section -->
-    <section class="py-16 md:py-24">
+    <!-- Solution Section -->
+    <section class="py-16 md:py-24 bg-white">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
-                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang-text='{"en": "The SKU Classification System Used by 8-Figure Brands", "es": "El Sistema de Clasificación de SKUs que usan las Grandes Marcas"}'></h3>
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="en">The System Used by 8-Figure Brands, Now for You</h3>
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="es" style="display:none;">El Sistema que usan las Grandes Marcas, ahora para Ti</h3>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-green-500" data-lang-text='{"en":"Winners", "es":"Ganadores"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"High-profit, high-volume stars. <b>Action:</b> Scale them aggressively.", "es":"Alta rentabilidad y alto volumen. <b>Acción:</b> Escálalos de forma agresiva."}'></p></div>
-                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-blue-500" data-lang-text='{"en":"Potentials", "es":"Potenciales"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"High-profit, low-volume gems. <b>Action:</b> Increase their visibility.", "es":"Alta rentabilidad y bajo volumen. <b>Acción:</b> Aumenta su visibilidad."}'></p></div>
-                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-red-500" data-lang-text='{"en":"Losers", "es":"Perdedores"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"Low-profit products that drain your budget. <b>Action:</b> Reduce their spend.", "es":"Productos que drenan tu presupuesto. <b>Acción:</b> Reduce su inversión."}'></p></div>
-                <div class="bg-white p-6 rounded-lg shadow-lg"><div class="text-2xl font-bold text-gray-500" data-lang-text='{"en":"Sleepers", "es":"Durmientes"}'></div><p class="mt-2 text-gray-600" data-lang-text='{"en":"Dead-weight products. <b>Action:</b> Exclude them from campaigns.", "es":"Productos de peso muerto. <b>Acción:</b> Exclúyelos de las campañas."}'></p></div>
+                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-green-500" data-lang="en">Winners</div><div class="text-2xl font-bold text-green-500" data-lang="es" style="display:none;">Ganadores</div><p class="mt-2 text-gray-600" data-lang="en">High-profit, high-volume stars.   
+<b>Action:</b> Scale them aggressively.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Alta rentabilidad y alto volumen.   
+<b>Acción:</b> Escálalos de forma agresiva.</p></div>
+                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-blue-500" data-lang="en">Potentials</div><div class="text-2xl font-bold text-blue-500" data-lang="es" style="display:none;">Potenciales</div><p class="mt-2 text-gray-600" data-lang="en">High-profit, low-volume gems.   
+<b>Action:</b> Increase their visibility.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Alta rentabilidad y bajo volumen.   
+<b>Acción:</b> Aumenta su visibilidad.</p></div>
+                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-red-500" data-lang="en">Losers</div><div class="text-2xl font-bold text-red-500" data-lang="es" style="display:none;">Perdedores</div><p class="mt-2 text-gray-600" data-lang="en">Low-profit products that drain your budget.   
+<b>Action:</b> Reduce their spend.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Productos que drenan tu presupuesto.   
+<b>Acción:</b> Reduce su inversión.</p></div>
+                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-gray-500" data-lang="en">Sleepers</div><div class="text-2xl font-bold text-gray-500" data-lang="es" style="display:none;">Durmientes</div><p class="mt-2 text-gray-600" data-lang="en">Dead-weight products.   
+<b>Action:</b> Exclude them from campaigns.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Productos de peso muerto.   
+<b>Acción:</b> Exclúyelos de las campañas.</p></div>
             </div>
         </div>
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" class="bg-white py-16 md:py-24">
+    <section id="pricing" class="py-16 md:py-24">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
-                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang-text='{"en": "Start for Free, Then Choose Your Path to Scale", "es": "Empieza Gratis, Luego Elige tu Camino para Escalar"}'></h3>
-                <p class="mt-2 text-lg text-gray-600" data-lang-text='{"en": "Your first classification is on us. See the value for yourself, then subscribe to stay ahead.", "es": "Tu primera clasificación corre de nuestra cuenta. Comprueba el valor por ti mismo y luego suscríbete para mantener la ventaja."}'></p>
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="en">Start for Free, Then Choose Your Path to Scale</h3>
+                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="es" style="display:none;">Empieza Gratis, Luego Elige tu Camino para Escalar</h3>
+                <p class="mt-2 text-lg text-gray-600" data-lang="en">Your first classification is on us. See the value for yourself, then subscribe to stay ahead.</p>
+                <p class="mt-2 text-lg text-gray-600" data-lang="es" style="display:none;">Tu primera clasificación corre de nuestra cuenta. Comprueba el valor por ti mismo y luego suscríbete para mantener la ventaja.</p>
             </div>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8">
-                <!-- Free Plan -->
-                <div class="bg-gray-100 border border-gray-200 p-8 rounded-lg w-full max-w-md text-center">
-                    <h4 class="text-2xl font-bold text-gray-900">FREE</h4>
-                    <p class="text-5xl font-extrabold my-4">$0</p>
-                    <p class="text-gray-600 h-24" data-lang-text='{"en": "A one-time, complete classification of your entire product catalog. Find your Winners, Losers, and hidden opportunities.", "es": "Una clasificación completa de todo tu catálogo de productos, por una sola vez. Encuentra tus Ganadores, Perdedores y oportunidades ocultas."}'></p>
-                    <button data-netlify-identity-button class="mt-8 w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700" data-lang-text='{"en": "Start for Free", "es": "Empieza Gratis"}'></button>
-                </div>
-                <!-- Growth Plan -->
-                <div class="bg-white p-8 rounded-lg w-full max-w-md text-center recommended-plan">
-                    <span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang-text='{"en": "Most Popular", "es": "Más Popular"}'></span>
-                    <h4 class="text-2xl font-bold text-indigo-600">GROWTH</h4>
-                    <p class="text-5xl font-extrabold my-4"><span data-lang-text='{"en": "$100", "es": "100€"}'></span><span class="text-base font-medium text-gray-500" data-lang-text='{"en": "/mo", "es": "/mes"}'></span></p>
-                    <p class="text-gray-600 h-24" data-lang-text='{"en": "Perfect for hands-on teams. Get automated weekly classifications to continuously optimize your ad spend and strategy.", "es": "Perfecto para equipos que toman el control. Obtén clasificaciones semanales para optimizar continuamente tu inversión y estrategia."}'></p>
-                    <a href="URL_DEL_PAGO_GROWTH" class="mt-8 block w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang-text='{"en": "Choose Growth", "es": "Elegir Growth"}'></a>
-                </div>
+            <div class="flex flex-col lg:flex-row justify-center items-center gap-8">
+                <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md lg:max-w-sm"><h4 class="text-2xl font-bold text-gray-900">FREE</h4><p class="text-5xl font-extrabold my-4">$0</p><p class="h-24 text-gray-600" data-lang="en">A one-time, complete classification of your entire product catalog. Find your Winners, Losers, and hidden opportunities.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Una clasificación completa, por única vez, de todo tu catálogo. Encuentra tus Ganadores, Perdedores y oportunidades ocultas.</p><div class="mt-8"><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="en">Start for Free</button><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="es" style="display:none;">Empieza Gratis</button></div></div>
+                <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md relative recommended-plan"><span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang="en">Most Popular</span><span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang="es" style="display:none;">Más Popular</span><h4 class="text-2xl font-bold text-indigo-600">GROWTH</h4><p class="text-5xl font-extrabold my-4"><span data-lang="en">$100</span><span data-lang="es" style="display:none;">100€</span><span class="text-base font-medium text-gray-500">/mo</span></p><p class="h-24 text-gray-600" data-lang="en">Perfect for hands-on teams. Get automated weekly classifications to continuously optimize your ad spend and strategy.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Perfecto para equipos autónomos. Recibe clasificaciones semanales automáticas para optimizar continuamente tu inversión y estrategia.</p><div class="mt-8"><button class="login-trigger w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang="en">Choose Growth</button><button class="login-trigger w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang="es" style="display:none;">Elegir Growth</button></div></div>
+                <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md lg:max-w-sm"><h4 class="text-2xl font-bold text-gray-900">SCALE</h4><p class="text-5xl font-extrabold my-4"><span data-lang="en">$250</span><span data-lang="es" style="display:none;">250€</span><span class="text-base font-medium text-gray-500">/mo</span></p><p class="h-24 text-gray-600" data-lang="en">For teams who want expert guidance. Includes everything in Growth, plus a monthly 1-on-1 strategy call.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Para equipos que quieren un experto a su lado. Incluye todo Growth, más una llamada estratégica mensual.</p><div class="mt-8"><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="en">Choose Scale</button><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="es" style="display:none;">Elegir Scale</button></div></div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2025 SKUscale. All rights reserved.</p>
-        </div>
-    </footer>
+    <footer class="bg-gray-800 text-white py-8"><div class="container mx-auto px-6 text-center"><p>&copy; 2025 SKUscale. All rights reserved.</p></div></footer>
 
     <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
+    <!-- SCRIPT FINAL CON LA CORRECCIÓN DE REDIRECCIÓN -->
     <script>
-        function setupEventListeners( ) {
-            const langEnBtn = document.getElementById('lang-en');
-            const langEsBtn = document.getElementById('lang-es');
-            const translatableElements = document.querySelectorAll('[data-lang-text]');
+        // --- 1. LANGUAGE SWITCHER (Simple and working version ) ---
+        const langEnBtn = document.getElementById('lang-en');
+        const langEsBtn = document.getElementById('lang-es');
+        const elementsEn = document.querySelectorAll('[data-lang="en"]');
+        const elementsEs = document.querySelectorAll('[data-lang="es"]');
 
-            function setLanguage(lang) {
-                translatableElements.forEach(el => {
-                    try {
-                        const texts = JSON.parse(el.dataset.langText.replace(/'/g, '"'));
-                        el.innerHTML = texts[lang];
-                    } catch (e) { console.error('Failed to parse lang-text JSON:', el.dataset.langText, e); }
-                });
-                if (lang === 'es') {
-                    langEsBtn.classList.add('text-indigo-600'); langEsBtn.classList.remove('text-gray-400');
-                    langEnBtn.classList.add('text-gray-400'); langEnBtn.classList.remove('text-indigo-600');
-                    document.documentElement.lang = 'es';
-                } else {
-                    langEnBtn.classList.add('text-indigo-600'); langEnBtn.classList.remove('text-gray-400');
-                    langEsBtn.classList.add('text-gray-400'); langEsBtn.classList.remove('text-indigo-600');
-                    document.documentElement.lang = 'en';
-                }
-            }
-
-            if (langEnBtn) langEnBtn.addEventListener('click', () => setLanguage('en'));
-            if (langEsBtn) langEsBtn.addEventListener('click', () => setLanguage('es'));
-            
-            // Set default language based on browser, fallback to 'en'
-            const userLang = navigator.language || navigator.userLanguage;
-            setLanguage(userLang.startsWith('es') ? 'es' : 'en');
-
-            if (window.netlifyIdentity) {
-                window.netlifyIdentity.on('init', user => {
-                    if (user && window.location.pathname === '/') {
-                        window.location.href = '/dashboard';
-                    }
-                });
-                window.netlifyIdentity.on('login', user => {
-                    window.location.href = '/dashboard';
-                });
+        function setLanguage(lang) {
+            if (lang === 'es') {
+                elementsEn.forEach(el => el.style.display = 'none');
+                elementsEs.forEach(el => el.style.display = '');
+                langEsBtn.classList.remove('text-gray-400', 'hover:text-indigo-600');
+                langEsBtn.classList.add('text-indigo-600');
+                langEnBtn.classList.add('text-gray-400', 'hover:text-indigo-600');
+                langEnBtn.classList.remove('text-indigo-600');
+                document.documentElement.lang = 'es';
+            } else {
+                elementsEn.forEach(el => el.style.display = '');
+                elementsEs.forEach(el => el.style.display = 'none');
+                langEnBtn.classList.remove('text-gray-400', 'hover:text-indigo-600');
+                langEnBtn.classList.add('text-indigo-600');
+                langEsBtn.classList.add('text-gray-400', 'hover:text-indigo-600');
+                langEsBtn.classList.remove('text-indigo-600');
+                document.documentElement.lang = 'en';
             }
         }
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setupEventListeners);
-        } else {
-            setupEventListeners();
+
+        langEnBtn.addEventListener('click', () => setLanguage('en'));
+        langEsBtn.addEventListener('click', () => setLanguage('es'));
+
+        // --- 2. NETLIFY IDENTITY LOGIC (With the 'login' event listener) ---
+        // Manual trigger for Netlify Identity
+        document.querySelectorAll('.login-trigger').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (window.netlifyIdentity) {
+                    window.netlifyIdentity.open();
+                } else {
+                    console.error('Netlify Identity widget not found.');
+                }
+            });
+        });
+
+        if (window.netlifyIdentity) {
+            // This handles users who are ALREADY logged in when they visit the page
+            window.netlifyIdentity.on('init', user => {
+                if (user && window.location.pathname === '/') {
+                    window.location.href = '/dashboard';
+                }
+            });
+
+            // THIS IS THE NEW, CRITICAL PART
+            // This handles users who JUST logged in or signed up
+            window.netlifyIdentity.on('login', user => {
+                window.location.href = '/dashboard';
+            });
         }
     </script>
 </body>
 </html>
-
