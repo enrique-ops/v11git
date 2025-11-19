@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Backend functions for SKUscale",
   "dependencies": {
-    "postgres": "^3.4.4"
+    "postgres": "^3.4.4",
+    "node-fetch": "^2.7.0"
   }
 }
