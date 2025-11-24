@@ -1,9 +1,8 @@
 {
   "name": "skuscale-backend",
-  "version": "1.0.0",
-  "description": "Backend functions for SKUscale",
+  "version": "2.0.0",
+  "description": "Webhook-only backend for SKUscale",
   "dependencies": {
-    "postgres": "^3.4.4",
     "node-fetch": "^2.7.0"
   }
 }
