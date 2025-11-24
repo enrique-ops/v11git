@@ -121,5 +121,48 @@
         }
         window.netlifyIdentity.on('init', user => { if (user) { initializeDashboard(); } else { window.netlifyIdentity.on('login', () => initializeDashboard()); } });
     </script>
+
+<!-- Dentro de tu archivo dashboard.html, añade este script al final, antes de </body> -->
+
+<script>
+  // Función para llamar a nuestro nuevo endpoint de backend
+  const registerUserOnFirstLogin = async (user) => {
+    try {
+      const response = await fetch('/.netlify/functions/register-user', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.token.access_token}`
+        }
+      });
+      if (!response.ok) {
+        console.error('Failed to register user on backend.');
+      }
+      const data = await response.json();
+      console.log('Backend registration response:', data.message);
+    } catch (error) {
+      console.error('Error calling registration function:', error);
+    }
+  };
+
+  // Escuchamos el evento 'init' de Netlify Identity
+  window.netlifyIdentity.on('init', user => {
+    if (user) {
+      // Comprobamos si es la primera vez que vemos a este usuario en esta sesión
+      const isFirstLogin = !sessionStorage.getItem('user_registered');
+
+      if (isFirstLogin) {
+        console.log('First login detected for:', user.email);
+        // Llamamos a la función de registro en el backend
+        registerUserOnFirstLogin(user);
+        // Marcamos al usuario como "ya registrado" en el almacenamiento de la sesión
+        // para no volver a llamarlo si el usuario refresca la página.
+        sessionStorage.setItem('user_registered', 'true');
+      } else {
+        console.log('Returning user:', user.email);
+      }
+    }
+  });
+</script>
+
 </body>
 </html>
