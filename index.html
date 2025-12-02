@@ -86,42 +86,47 @@
 
     <footer class="bg-gray-800 text-white py-8"><div class="container mx-auto px-6 text-center"><p>&copy; 2025 SKUscale. All rights reserved.</p></div></footer>
     
-    <script>
-    // --- 1. LANGUAGE SWITCHER (Sin cambios) ---
+<script>
+    // --- 1. LANGUAGE SWITCHER (No se toca) ---
     // ... tu código de idioma ...
 
-    // --- 2. LÓGICA DE AUTENTICACIÓN CON AUTH0 (MÁS ROBUSTA) ---
+    // --- 2. LÓGICA DE AUTENTICACIÓN CON AUTH0 (VERSIÓN FINAL Y COMPLETA) ---
     let auth0Client = null;
 
-    // La configuración se mueve fuera del window.onload para que esté disponible antes
-    const auth0Promise = auth0.createAuth0Client({
+    // Función para configurar el cliente de Auth0
+    const configureClient = async () => {
+        if (auth0Client) return auth0Client; // Si ya está creado, no hacer nada
+        try {
+            auth0Client = await auth0.createAuth0Client({
         domain: "nml.eu.auth0.com", // <-- PON TU DOMINIO REAL
         clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a" // <-- PON TU CLIENT ID REAL
-    }).then(client => {
-        auth0Client = client;
-        return client;
-    }).catch(e => {
-        console.error("Error fatal al inicializar Auth0:", e);
-    });
-
-    // La función de login ahora es más simple y directa
-    const login = async () => {
-        const client = await auth0Promise; // Espera a que el cliente esté listo
-        if (!client) {
-            console.error("No se puede iniciar sesión, el cliente de Auth0 falló al inicializarse.");
-            return;
+            });
+            return auth0Client;
+        } catch (e) {
+            console.error("Error fatal al inicializar Auth0:", e);
+            return null;
         }
-        // Esta es la llamada que el navegador podría estar bloqueando.
-        // Al ser más directa, hay más posibilidades de que funcione.
-        await client.loginWithRedirect({
-            authorizationParams: {
-                redirect_uri: window.location.origin + '/dashboard.html',
-                connection: 'google-oauth2'
-            }
-        });
     };
 
-    // Asignamos el evento a los botones
+    // Función para iniciar sesión
+    const login = async () => {
+        const client = await configureClient();
+        if (!client) {
+            alert("El servicio de autenticación no está disponible. Por favor, inténtalo más tarde.");
+            return;
+        }
+        try {
+            await client.loginWithRedirect({
+                authorizationParams: {
+                    redirect_uri: window.location.origin + '/dashboard.html'
+                }
+            });
+        } catch (e) {
+            console.error("Error al intentar redirigir para el login:", e);
+        }
+    };
+
+    // Asignamos la función de login a los botones
     document.querySelectorAll('.login-trigger').forEach(el => {
         el.addEventListener('click', (e) => {
             e.preventDefault();
@@ -129,25 +134,38 @@
         });
     });
 
-    // La lógica de window.onload ahora solo gestiona la redirección
-    window.onload = async () => {
-        const client = await auth0Promise;
+    // Función principal que se ejecuta al cargar la página
+    const main = async () => {
+        const client = await configureClient();
         if (!client) return;
 
-        // Si la URL contiene 'code' y 'state', es una redirección de Auth0
         const query = window.location.search;
+
+        // CASO 1: La URL es una redirección de Auth0 con códigos
         if (query.includes("code=") && query.includes("state=")) {
             try {
                 await client.handleRedirectCallback();
-                // Usamos replace para que el usuario no pueda volver atrás a la URL con el código
                 window.location.replace('/dashboard.html');
+                return; // Detenemos la ejecución aquí
             } catch (e) {
                 console.error("Error en handleRedirectCallback:", e);
-                // Si falla, lo mandamos a la página de inicio
-                window.location.replace('/');
+                window.location.replace('/'); // Si falla, volvemos a la home limpia
+                return;
             }
         }
+
+        // CASO 2: La URL está limpia. Comprobamos si ya hay una sesión activa.
+        // ESTA ES LA PARTE QUE FALTABA Y QUE ROMPÍA TODO.
+        const isAuthenticated = await client.isAuthenticated();
+        if (isAuthenticated) {
+            // Si ya está logueado, lo mandamos directamente al dashboard.
+            window.location.href = '/dashboard.html';
+            return;
+        }
     };
+
+    // Ejecutamos la función principal al cargar la ventana.
+    window.onload = main;
 </script>
 
 
