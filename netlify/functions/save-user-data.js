@@ -1,86 +1,96 @@
-// Importamos las librerías necesarias
 const { ManagementClient } = require('auth0');
-const { expressjwt: jwt } = require('express-jwt');
-const jwks = require('jwks-rsa');
+const { promisify } = require('util');
+const jwksRsa = require('jwks-rsa');
+const jwt = require('jsonwebtoken');
 
-// Configuración de Auth0 (¡IMPORTANTE!)
-// Debes añadir estas variables al entorno de Netlify
+// --- Configuración ---
 const auth0Domain = process.env.AUTH0_DOMAIN;
-const auth0Audience = process.env.AUTH0_AUDIENCE; // Generalmente 'https://tu-dominio.auth0.com/api/v2/'
+const auth0Audience = process.env.AUTH0_AUDIENCE;
 const auth0ClientId = process.env.AUTH0_CLIENT_ID;
 const auth0ClientSecret = process.env.AUTH0_CLIENT_SECRET;
-const auth0ManagementToken = process.env.AUTH0_MANAGEMENT_TOKEN; // Token de la API de Auth0
 
-// Middleware para validar el token JWT de Auth0
-const checkJwt = jwt({
-  secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://${auth0Domain}/.well-known/jwks.json`
-  } ),
-  audience: auth0Audience,
-  issuer: `https://${auth0Domain}/`,
-  algorithms: ['RS256']
+// Creamos un cliente para obtener las claves de firma de Auth0
+const jwksClient = jwksRsa({
+  jwksUri: `https://${auth0Domain}/.well-known/jwks.json`,
+  cache: true,
+  rateLimit: true,
 } );
 
-// El handler principal de la función
+// Convertimos la función de callback a una promesa para usar con async/await
+const getSigningKey = promisify(jwksClient.getSigningKey);
+
+// --- El Handler Principal ---
 exports.handler = async (event, context) => {
-  // 1. Verificación del método HTTP
+  console.log('Función save-user-data iniciada.');
+
+  // 1. Validar que es una petición POST
   if (event.httpMethod !== 'POST' ) {
+    console.log('Error: Método no permitido.');
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  // 2. Verificación del Token (Simulada, ya que Netlify no soporta middleware directamente)
-  // En un entorno Express real, usarías `checkJwt` como middleware.
-  // Aquí, tenemos que simularlo o, para simplificar, confiar en el `context.clientContext` si está bien configurado.
-  // PERO, la forma más robusta es validar el token que nos llega en el header.
-  
-  // La forma más simple y segura en Netlify Functions es usar el `context.clientContext`
-  // que Netlify ya ha validado por nosotros si configuramos la integración con Auth0.
-  const { user } = context.clientContext;
-  if (!user) {
-    return {
-      statusCode: 401,
-      body: JSON.stringify({ message: 'Unauthorized: No user context found.' })
-    };
+  // 2. Extraer el token del header de Authorization
+  const authHeader = event.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.log('Error: Falta el header de Authorization o no es de tipo Bearer.');
+    return { statusCode: 401, body: JSON.stringify({ message: 'Authorization header is missing or invalid.' }) };
+  }
+  const token = authHeader.substring(7); // Quitamos "Bearer "
+
+  let decodedToken;
+  try {
+    // 3. Validar el token JWT
+    console.log('Intentando validar el token...');
+    const key = await getSigningKey(jwt.decode(token, { complete: true }).header.kid);
+    decodedToken = jwt.verify(token, key.getPublicKey(), {
+      audience: auth0Audience,
+      issuer: `https://${auth0Domain}/`,
+      algorithms: ['RS256']
+    } );
+    console.log('Token validado con éxito.');
+  } catch (error) {
+    console.error('Error de validación de token:', error.message);
+    return { statusCode: 401, body: JSON.stringify({ message: 'Token validation failed.', error: error.message }) };
   }
 
-  // 3. Procesar los datos
+  // 4. Procesar los datos del body
   const { adsId } = JSON.parse(event.body);
   if (!adsId) {
+    console.log('Error: Falta el adsId en el body.');
     return { statusCode: 400, body: JSON.stringify({ message: 'Google Ads ID is required.' }) };
   }
+  console.log(`Ads ID recibido: ${adsId}`);
 
-  // El 'sub' es el ID único del usuario en Auth0 (ej: 'auth0|xxxxxxxx')
-  const userId = user.sub;
+  // El 'sub' es el ID único del usuario en Auth0
+  const userId = decodedToken.sub;
+  console.log(`ID de usuario (sub): ${userId}`);
 
-  // 4. Inicializar el Cliente de Gestión de Auth0
-  // Esto es para guardar el adsId en los metadatos del usuario en Auth0
-  const auth0 = new ManagementClient({
-    domain: auth0Domain,
-    clientId: auth0ClientId,
-    clientSecret: auth0ClientSecret,
-  });
-
-  // 5. Guardar el adsId en los 'user_metadata' del usuario
+  // 5. Guardar el adsId en los metadatos de Auth0
   try {
+    console.log('Conectando con la Management API de Auth0...');
+    const auth0 = new ManagementClient({
+      domain: auth0Domain,
+      clientId: auth0ClientId,
+      clientSecret: auth0ClientSecret,
+    });
+
+    console.log(`Actualizando metadatos para el usuario ${userId}...`);
     await auth0.users.update({ id: userId }, {
       user_metadata: {
         google_ads_id: adsId
       }
     });
+    console.log('Metadatos actualizados con éxito.');
 
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Google Ads ID saved successfully.' })
     };
-
   } catch (error) {
-    console.error('Error updating user metadata in Auth0:', error);
+    console.error('Error al actualizar los metadatos en Auth0:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Failed to save Google Ads ID.' })
+      body: JSON.stringify({ message: 'Failed to save Google Ads ID in Auth0.', error: error.message })
     };
   }
 };
