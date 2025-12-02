@@ -1,6 +1,8 @@
 {
   "name": "skuscale-backend",
   "version": "2.0.0",
-  "description": "Webhook-only backend for SKUscale",
+  "description": "SKUScale Backend Functions",
   "dependencies": {
     "node-fetch": "^2.7.0"
+  }
+}
