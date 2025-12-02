@@ -1,7 +1,4 @@
+# Este es el único ajuste necesario.
+# Le dice a Netlify cómo empaquetar las funciones.
 [functions]
   node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
