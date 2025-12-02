@@ -11,9 +11,13 @@
         body { font-family: 'Inter', sans-serif; }
         .recommended-plan { transform: scale(1.05  ); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 2px #4f46e5; }
     </style>
+    <!-- PASO 1: Añadir el SDK de Auth0 -->
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
+
+    <!-- Todo tu HTML (Header, Main, Sections, Footer ) permanece intacto. -->
+    <!-- Es perfecto y no necesita cambios. -->
 
     <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
@@ -35,7 +39,7 @@
     <main class="container mx-auto px-6 pt-16 pb-12 md:pt-24 md:pb-20 text-center">
         <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang="en">Stop Guessing, <span class="text-indigo-600">Start Scaling.</span></h2>
         <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang="es" style="display:none;">Deja de Adivinar, <span class="text-indigo-600">Empieza a Escalar.</span></h2>
-        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang="en">Get your <b>first complete SKU classification for free</b> and discover your most profitable (and unprofitable ) products right now.</p>
+        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang="en">Get your <b>first complete SKU classification for free</b> and discover your most profitable (and unprofitable) products right now.</p>
         <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang="es" style="display:none;">Consigue tu <b>primera clasificación de SKUs completa y gratis</b>, y descubre ahora mismo tus productos más rentables (y los que no lo son).</p>
         <div class="mt-8">
             <button class="login-trigger bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 text-lg" data-lang="en">Get Your Free SKU Classification</button>
@@ -43,7 +47,7 @@
         </div>
     </main>
 
-    <!-- Solution Section (AHORA RESTAURADA) -->
+    <!-- Solution Section -->
     <section class="py-16 md:py-24 bg-white">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
@@ -67,7 +71,7 @@
         </div>
     </section>
 
-    <!-- Pricing Section (AHORA RESTAURADA) -->
+    <!-- Pricing Section -->
     <section id="pricing" class="py-16 md:py-24">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
@@ -85,89 +89,115 @@
     </section>
 
     <footer class="bg-gray-800 text-white py-8"><div class="container mx-auto px-6 text-center"><p>&copy; 2025 SKUscale. All rights reserved.</p></div></footer>
+
+    <!-- PASO 2: Eliminar el script antiguo de Netlify Identity -->
+    <!-- <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script> -->
     
-<script>
-    // --- 1. LANGUAGE SWITCHER (No se toca) ---
-    // ... tu código de idioma ...
+    <!-- PASO 3: Añadir el script de Auth0, completo y con tus credenciales -->
+    <script>
+        // --- LÓGICA DE CAMBIO DE IDIOMA (Sin cambios ) ---
+        const langEnBtn = document.getElementById('lang-en');
+        const langEsBtn = document.getElementById('lang-es');
+        const elementsEn = document.querySelectorAll('[data-lang="en"]');
+        const elementsEs = document.querySelectorAll('[data-lang="es"]');
 
-    // --- 2. LÓGICA DE AUTENTICACIÓN CON AUTH0 (VERSIÓN FINAL Y COMPLETA) ---
-    let auth0Client = null;
-
-    // Función para configurar el cliente de Auth0
-    const configureClient = async () => {
-        if (auth0Client) return auth0Client; // Si ya está creado, no hacer nada
-        try {
-            auth0Client = await auth0.createAuth0Client({
-        domain: "nml.eu.auth0.com", // <-- PON TU DOMINIO REAL
-        clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a" // <-- PON TU CLIENT ID REAL
-            });
-            return auth0Client;
-        } catch (e) {
-            console.error("Error fatal al inicializar Auth0:", e);
-            return null;
-        }
-    };
-
-    // Función para iniciar sesión
-    const login = async () => {
-        const client = await configureClient();
-        if (!client) {
-            alert("El servicio de autenticación no está disponible. Por favor, inténtalo más tarde.");
-            return;
-        }
-        try {
-            await client.loginWithRedirect({
-                authorizationParams: {
-                    redirect_uri: window.location.origin + '/dashboard.html'
-                }
-            });
-        } catch (e) {
-            console.error("Error al intentar redirigir para el login:", e);
-        }
-    };
-
-    // Asignamos la función de login a los botones
-    document.querySelectorAll('.login-trigger').forEach(el => {
-        el.addEventListener('click', (e) => {
-            e.preventDefault();
-            login();
-        });
-    });
-
-    // Función principal que se ejecuta al cargar la página
-    const main = async () => {
-        const client = await configureClient();
-        if (!client) return;
-
-        const query = window.location.search;
-
-        // CASO 1: La URL es una redirección de Auth0 con códigos
-        if (query.includes("code=") && query.includes("state=")) {
-            try {
-                await client.handleRedirectCallback();
-                window.location.replace('/dashboard.html');
-                return; // Detenemos la ejecución aquí
-            } catch (e) {
-                console.error("Error en handleRedirectCallback:", e);
-                window.location.replace('/'); // Si falla, volvemos a la home limpia
-                return;
+        function setLanguage(lang) {
+            if (lang === 'es') {
+                elementsEn.forEach(el => el.style.display = 'none');
+                elementsEs.forEach(el => el.style.display = '');
+                langEsBtn.classList.remove('text-gray-400', 'hover:text-indigo-600');
+                langEsBtn.classList.add('text-indigo-600');
+                langEnBtn.classList.add('text-gray-400', 'hover:text-indigo-600');
+                langEnBtn.classList.remove('text-indigo-600');
+                document.documentElement.lang = 'es';
+            } else {
+                elementsEn.forEach(el => el.style.display = '');
+                elementsEs.forEach(el => el.style.display = 'none');
+                langEnBtn.classList.remove('text-gray-400', 'hover:text-indigo-600');
+                langEnBtn.classList.add('text-indigo-600');
+                langEsBtn.classList.add('text-gray-400', 'hover:text-indigo-600');
+                langEsBtn.classList.remove('text-indigo-600');
+                document.documentElement.lang = 'en';
             }
         }
+        langEnBtn.addEventListener('click', () => setLanguage('en'));
+        langEsBtn.addEventListener('click', () => setLanguage('es'));
 
-        // CASO 2: La URL está limpia. Comprobamos si ya hay una sesión activa.
-        // ESTA ES LA PARTE QUE FALTABA Y QUE ROMPÍA TODO.
-        const isAuthenticated = await client.isAuthenticated();
-        if (isAuthenticated) {
-            // Si ya está logueado, lo mandamos directamente al dashboard.
-            window.location.href = '/dashboard.html';
-            return;
-        }
-    };
+        // --- LÓGICA DE AUTENTICACIÓN CON AUTH0 (Versión final) ---
+        let auth0Client = null;
 
-    // Ejecutamos la función principal al cargar la ventana.
-    window.onload = main;
-</script>
+        // Función para configurar el cliente de Auth0 con tus credenciales
+        const configureClient = async () => {
+            try {
+                auth0Client = await auth0.createAuth0Client({
+                    domain: "nml.eu.auth0.com",
+                    clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
+                });
+                return auth0Client;
+            } catch (e) {
+                console.error("Error al inicializar Auth0:", e);
+                return null;
+            }
+        };
 
+        // Función para iniciar sesión, llamada por los botones
+        const login = async () => {
+            const client = await configureClient();
+            if (!client) {
+                alert("Servicio de autenticación no disponible. Inténtalo más tarde.");
+                return;
+            }
+            try {
+                await client.loginWithRedirect({
+                    authorizationParams: {
+                        redirect_uri: window.location.origin + '/dashboard.html'
+                    }
+                });
+            } catch (e) {
+                console.error("Error al redirigir para el login:", e);
+            }
+        };
 
+        // Asignamos la función de login a todos los botones con la clase 'login-trigger'
+        document.querySelectorAll('.login-trigger').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                login();
+            });
+        });
+
+        // Función principal que se ejecuta al cargar la página
+        const main = async () => {
+            const client = await configureClient();
+            if (!client) return;
+
+            const query = window.location.search;
+
+            // CASO 1: La URL es una redirección de Auth0 (contiene 'code' y 'state')
+            // Esto ocurre si el usuario es redirigido a index.html en lugar de dashboard.html
+            if (query.includes("code=") && query.includes("state=")) {
+                try {
+                    await client.handleRedirectCallback();
+                    window.location.replace('/dashboard.html'); // Lo enviamos al dashboard
+                    return;
+                } catch (e) {
+                    console.error("Error en handleRedirectCallback:", e);
+                    window.location.replace('/'); // Si falla, a la home limpia
+                    return;
+                }
+            }
+
+            // CASO 2: La URL está limpia. Comprobamos si ya hay una sesión activa.
+            const isAuthenticated = await client.isAuthenticated();
+            if (isAuthenticated) {
+                // Si ya está logueado, lo mandamos directamente al dashboard.
+                window.location.href = '/dashboard.html';
+                return;
+            }
+        };
+
+        // Ejecutamos la función principal al cargar la ventana.
+        main();
+    </script>
 </body>
 </html>
