@@ -1,5 +1,0 @@
-# Redirige a la landing si se intenta acceder al dashboard sin estar logueado
-/dashboard    /    302!    Role=!user
-
-# Si un usuario logueado llega a la landing, llévalo al dashboard
-/             /dashboard    302    Role=user
