@@ -70,10 +70,13 @@
         // Función para configurar el cliente de Auth0
         const configureClient = async () => {
             try {
-                auth0Client = await auth0.createAuth0Client({
-                domain: "nml.eu.auth0.com", // <-- USA TU DOMINIO REAL
-                clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a" // <-- USA TU CLIENT ID REAL
-                });
+    auth0Client = await auth0.createAuth0Client({
+    domain: "nml.eu.auth0.com", // O tu dominio personalizado si ya lo usas
+    clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a",
+    authorizationParams: {
+      audience: "https://nml.eu.auth0.com/api/v2/" // <-- ¡ESTA ES LA LÍNEA CLAVE!
+    }
+} );
                 return auth0Client;
             } catch (e) {
                 console.error("Error al configurar Auth0 en el dashboard:", e);
