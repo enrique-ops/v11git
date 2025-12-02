@@ -1,8 +1,17 @@
 {
-  "name": "skuscale-backend",
-  "version": "2.0.0",
-  "description": "SKUScale Backend Functions",
+  "name": "skuscale-project",
+  "version": "1.0.0",
+  "description": "SKUScale Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+    "auth0": "^4.2.0",
+    "express-jwt": "^8.4.1",
+    "jwks-rsa": "^3.1.0",
     "node-fetch": "^2.7.0"
   }
 }
