@@ -95,8 +95,8 @@
 
     // La configuración se mueve fuera del window.onload para que esté disponible antes
     const auth0Promise = auth0.createAuth0Client({
-        domain: "TU_DOMINIO_DE_AUTH0", // <-- PON TU DOMINIO REAL
-        clientId: "TU_CLIENT_ID_DE_AUTH0" // <-- PON TU CLIENT ID REAL
+        domain: "nml.eu.auth0.com", // <-- PON TU DOMINIO REAL
+        clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a" // <-- PON TU CLIENT ID REAL
     }).then(client => {
         auth0Client = client;
         return client;
