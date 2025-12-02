@@ -1,177 +1,178 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKUscale - Stop Guessing, Start Scaling</title>
+    <title>SKUscale Dashboard</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .recommended-plan { transform: scale(1.05  ); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 2px #4f46e5; }
-    </style>
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <!-- 1. SDK de Auth0 (igual que en el index ) -->
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-800">
-
+<body class="bg-gray-100">
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
+    <header class="bg-white shadow-sm">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="/"><img src="/skuscale-logo.svg" alt="SKUscale Logo" class="h-8"></a>
-            <div class="flex items-center space-x-4">
-                <a href="#pricing" class="text-gray-600 hover:text-indigo-600" data-lang="en">Pricing</a>
-                <a href="#pricing" class="text-gray-600 hover:text-indigo-600" data-lang="es" style="display:none;">Precios</a>
-                <div>
-                    <button id="lang-en" class="font-semibold text-indigo-600">EN</button>
-                    <span class="text-gray-300">/</span>
-                    <button id="lang-es" class="font-semibold text-gray-400 hover:text-indigo-600">ES</button>
+            <div id="user-menu-container" class="relative hidden">
+                <button id="user-menu-button" class="flex items-center space-x-2">
+                    <span id="user-name" class="font-semibold text-gray-700"></span>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="user-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
+                    <div class="px-4 py-2 text-sm text-gray-700 border-b">
+                        <p class="font-bold">Signed in as</p>
+                        <p id="user-email" class="truncate"></p>
+                    </div>
+                    <button id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log out</button>
                 </div>
             </div>
         </div>
     </header>
-
-    <!-- Hero Section -->
-    <main class="container mx-auto px-6 pt-16 pb-12 md:pt-24 md:pb-20 text-center">
-        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang="en">Stop Guessing, <span class="text-indigo-600">Start Scaling.</span></h2>
-        <h2 class="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-900" data-lang="es" style="display:none;">Deja de Adivinar, <span class="text-indigo-600">Empieza a Escalar.</span></h2>
-        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang="en">Get your <b>first complete SKU classification for free</b> and discover your most profitable (and unprofitable ) products right now.</p>
-        <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-600" data-lang="es" style="display:none;">Consigue tu <b>primera clasificación de SKUs completa y gratis</b>, y descubre ahora mismo tus productos más rentables (y los que no lo son).</p>
-        <div class="mt-8">
-            <button class="login-trigger bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 text-lg" data-lang="en">Get Your Free SKU Classification</button>
-            <button class="login-trigger bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-transform transform hover:scale-105 text-lg" data-lang="es" style="display:none;">Consigue tu Clasificación Gratis</button>
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="welcome-name"></span>!</h2>
+        <p class="mt-2 text-lg text-gray-600">Let's get you set up. Just follow the steps below.</p>
+        <!-- Step 1: Submit Google Ads ID -->
+        <div id="step-1" class="mt-8 max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                <h3 class="ml-4 text-xl font-bold text-gray-800">Submit your Google Ads ID</h3>
+            </div>
+            <p class="text-gray-600 mb-4">Please provide your 10-digit Google Ads Customer ID (e.g., 123-456-7890  ). We need this to request read-only access to your account's performance data.</p>
+            <form id="onboarding-form">
+                <label for="ads-id" class="block text-sm font-medium text-gray-700">Google Ads Customer ID</label>
+                <input type="text" id="ads-id" name="ads-id" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="XXX-XXX-XXXX" required>
+                <button type="submit" class="mt-6 w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400">Submit ID</button>
+            </form>
+        </div>
+        <!-- Step 2: Confirmation -->
+        <div id="step-2" class="hidden mt-8 max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+            <div class="flex items-center mb-6">
+                <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
+                <h3 class="ml-4 text-xl font-bold text-gray-800">ID Received! What's Next?</h3>
+            </div>
+            <div class="space-y-4 text-gray-600">
+                <p>Thank you! We've received your Google Ads ID. Our system is now preparing to connect to your account.</p>
+                <p><b class="text-gray-800">Important:</b> This onboarding process involves a "human in the loop" to ensure everything is set up correctly. Within the next 24 hours, we will send a <b>read-only access request</b> to your Google Ads account from our Manager Account (MCC).</p>
+                <p>Please keep an eye on your email for the access request notification from Google and accept it. You can also check back here for status updates.</p>
+            </div>
         </div>
     </main>
 
-    <!-- Solution Section (AHORA RESTAURADA) -->
-    <section class="py-16 md:py-24 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-12">
-                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="en">The System Used by 8-Figure Brands, Now for You</h3>
-                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="es" style="display:none;">El Sistema que usan las Grandes Marcas, ahora para Ti</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-green-500" data-lang="en">Winners</div><div class="text-2xl font-bold text-green-500" data-lang="es" style="display:none;">Ganadores</div><p class="mt-2 text-gray-600" data-lang="en">High-profit, high-volume stars.   
-<b>Action:</b> Scale them aggressively.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Alta rentabilidad y alto volumen.   
-<b>Acción:</b> Escálalos de forma agresiva.</p></div>
-                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-blue-500" data-lang="en">Potentials</div><div class="text-2xl font-bold text-blue-500" data-lang="es" style="display:none;">Potenciales</div><p class="mt-2 text-gray-600" data-lang="en">High-profit, low-volume gems.   
-<b>Action:</b> Increase their visibility.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Alta rentabilidad y bajo volumen.   
-<b>Acción:</b> Aumenta su visibilidad.</p></div>
-                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-red-500" data-lang="en">Losers</div><div class="text-2xl font-bold text-red-500" data-lang="es" style="display:none;">Perdedores</div><p class="mt-2 text-gray-600" data-lang="en">Low-profit products that drain your budget.   
-<b>Action:</b> Reduce their spend.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Productos que drenan tu presupuesto.   
-<b>Acción:</b> Reduce su inversión.</p></div>
-                <div class="bg-gray-50 p-6 rounded-lg border"><div class="text-2xl font-bold text-gray-500" data-lang="en">Sleepers</div><div class="text-2xl font-bold text-gray-500" data-lang="es" style="display:none;">Durmientes</div><p class="mt-2 text-gray-600" data-lang="en">Dead-weight products.   
-<b>Action:</b> Exclude them from campaigns.</p><p class="mt-2 text-gray-600" data-lang="es" style="display:none;">Productos de peso muerto.   
-<b>Acción:</b> Exclúyelos de las campañas.</p></div>
-            </div>
-        </div>
-    </section>
+    <!-- 2. EL SCRIPT COMPLETO Y CORRECTO PARA EL DASHBOARD -->
+    <script>
+        let auth0Client = null;
 
-    <!-- Pricing Section (AHORA RESTAURADA) -->
-    <section id="pricing" class="py-16 md:py-24">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-12">
-                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="en">Start for Free, Then Choose Your Path to Scale</h3>
-                <h3 class="text-3xl md:text-4xl font-bold text-gray-900" data-lang="es" style="display:none;">Empieza Gratis, Luego Elige tu Camino para Escalar</h3>
-                <p class="mt-2 text-lg text-gray-600" data-lang="en">Your first classification is on us. See the value for yourself, then subscribe to stay ahead.</p>
-                <p class="mt-2 text-lg text-gray-600" data-lang="es" style="display:none;">Tu primera clasificación corre de nuestra cuenta. Comprueba el valor por ti mismo y luego suscríbete para mantener la ventaja.</p>
-            </div>
-            <div class="flex flex-col lg:flex-row justify-center items-center gap-8">
-                <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md lg:max-w-sm"><h4 class="text-2xl font-bold text-gray-900">FREE</h4><p class="text-5xl font-extrabold my-4">$0</p><p class="h-24 text-gray-600" data-lang="en">A one-time, complete classification of your entire product catalog. Find your Winners, Losers, and hidden opportunities.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Una clasificación completa, por única vez, de todo tu catálogo. Encuentra tus Ganadores, Perdedores y oportunidades ocultas.</p><div class="mt-8"><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="en">Start for Free</button><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="es" style="display:none;">Empieza Gratis</button></div></div>
-                <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md relative recommended-plan"><span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang="en">Most Popular</span><span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang="es" style="display:none;">Más Popular</span><h4 class="text-2xl font-bold text-indigo-600">GROWTH</h4><p class="text-5xl font-extrabold my-4"><span data-lang="en">$100</span><span data-lang="es" style="display:none;">100€</span><span class="text-base font-medium text-gray-500">/mo</span></p><p class="h-24 text-gray-600" data-lang="en">Perfect for hands-on teams. Get automated weekly classifications to continuously optimize your ad spend and strategy.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Perfecto para equipos autónomos. Recibe clasificaciones semanales automáticas para optimizar continuamente tu inversión y estrategia.</p><div class="mt-8"><button class="login-trigger w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang="en">Choose Growth</button><button class="login-trigger w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang="es" style="display:none;">Elegir Growth</button></div></div>
-                <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md lg:max-w-sm"><h4 class="text-2xl font-bold text-gray-900">SCALE</h4><p class="text-5xl font-extrabold my-4"><span data-lang="en">$250</span><span data-lang="es" style="display:none;">250€</span><span class="text-base font-medium text-gray-500">/mo</span></p><p class="h-24 text-gray-600" data-lang="en">For teams who want expert guidance. Includes everything in Growth, plus a monthly 1-on-1 strategy call.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Para equipos que quieren un experto a su lado. Incluye todo Growth, más una llamada estratégica mensual.</p><div class="mt-8"><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="en">Choose Scale</button><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="es" style="display:none;">Elegir Scale</button></div></div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-gray-800 text-white py-8"><div class="container mx-auto px-6 text-center"><p>&copy; 2025 SKUscale. All rights reserved.</p></div></footer>
-    
-
-<script>
-
-        // --- 1. LANGUAGE SWITCHER (Sin cambios) ---
-        // ... tu código de cambio de idioma ...
-
-        // --- 2. LÓGICA DE AUTENTICACIÓN CON AUTH0 (CORREGIDA) ---
-    let auth0Client = null;
-
-    const configureClient = async () => {
-        try {
-            auth0Client = await auth0.createAuth0Client({
+        // Función para configurar el cliente de Auth0
+        const configureClient = async () => {
+            try {
+                auth0Client = await auth0.createAuth0Client({
                 domain: "nml.eu.auth0.com", // <-- USA TU DOMINIO REAL
                 clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a" // <-- USA TU CLIENT ID REAL
-            });
-            return auth0Client;
-        } catch (e) {
-            console.error("Error al configurar Auth0:", e);
-            return null;
-        }
-    };
-
-    const initializeDashboard = async (client) => {
-        // Obtenemos los datos del usuario de Auth0.
-        const user = await client.getUser();
-
-        // Rellenamos la UI con los datos del usuario
-        const userMenuContainer = document.getElementById('user-menu-container');
-        const userNameDisplay = document.getElementById('user-name');
-        const userEmailDisplay = document.getElementById('user-email');
-        const logoutButton = document.getElementById('logout-button');
-        const welcomeName = document.getElementById('welcome-name');
-        
-        const fullName = user.name || user.email.split('@')[0];
-        if (userNameDisplay) userNameDisplay.textContent = fullName;
-        if (userEmailDisplay) userEmailDisplay.textContent = user.email;
-        if (welcomeName) welcomeName.textContent = fullName;
-        if (userMenuContainer) userMenuContainer.classList.remove('hidden');
-
-        // Lógica del menú y logout
-        document.getElementById('user-menu-button')?.addEventListener('click', () => document.getElementById('user-menu').classList.toggle('hidden'));
-        logoutButton?.addEventListener('click', () => {
-            client.logout({
-                logoutParams: { returnTo: window.location.origin }
-            });
-        });
-
-        // Lógica del formulario de Onboarding (sin cambios)
-        // ... (el resto de tu lógica de formulario que ya funcionaba)
-    };
-
-    // ESTA ES LA LÓGICA PRINCIPAL QUE SE EJECUTA AL CARGAR LA PÁGINA
-    window.onload = async () => {
-        const client = await configureClient();
-        if (!client) {
-            console.error("Auth0 no se pudo inicializar. Abortando.");
-            return;
-        }
-
-        const query = window.location.search;
-
-        // CASO 1: La URL contiene los códigos de Auth0.
-        if (query.includes("code=") && query.includes("state=")) {
-            try {
-                await client.handleRedirectCallback();
-                // Limpiamos la URL para quitar los códigos y recargamos la página en su estado "limpio".
-                window.history.replaceState({}, document.title, "/dashboard.html");
-                // Una vez limpia la URL, inicializamos el dashboard.
-                await initializeDashboard(client);
+                });
+                return auth0Client;
             } catch (e) {
-                console.error("Error en handleRedirectCallback:", e);
-                window.location.href = '/'; // Si falla, lo mandamos a la home.
+                console.error("Error al configurar Auth0 en el dashboard:", e);
+                return null;
             }
-        // CASO 2: La URL está limpia, pero necesitamos verificar si el usuario está logueado.
-        } else {
-            const isAuthenticated = await client.isAuthenticated();
-            if (isAuthenticated) {
-                // Si está autenticado, mostramos el dashboard.
-                await initializeDashboard(client);
-            } else {
-                // Si no está autenticado y la URL está limpia, no debería estar aquí. Lo expulsamos.
-                window.location.href = '/';
-            }
-        }
-    };
-</script>
+        };
 
+        // Función que se ejecuta una vez que sabemos que el usuario está autenticado
+        const renderDashboard = async (client) => {
+            const user = await client.getUser();
+            
+            // Rellenar la UI con datos del usuario
+            document.getElementById('user-name').textContent = user.name || user.email;
+            document.getElementById('user-email').textContent = user.email;
+            document.getElementById('welcome-name').textContent = user.name || user.email.split('@')[0];
+            document.getElementById('user-menu-container').classList.remove('hidden');
+
+            // Lógica del menú y logout
+            document.getElementById('user-menu-button').addEventListener('click', () => document.getElementById('user-menu').classList.toggle('hidden'));
+            document.getElementById('logout-button').addEventListener('click', () => {
+                client.logout({
+                    logoutParams: { returnTo: window.location.origin }
+                });
+            });
+
+            // Lógica del formulario (la que ya tenías)
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const onboardingForm = document.getElementById('onboarding-form');
+
+            if (localStorage.getItem('skuscale_id_submitted') === 'true') {
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+            }
+
+            onboardingForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const submitButton = onboardingForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Saving...';
+
+                try {
+                    const adsId = document.getElementById('ads-id').value;
+                    const token = await client.getTokenSilently(); // Obtiene el token de forma segura
+
+                    const response = await fetch('/.netlify/functions/save-user-data', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ adsId: adsId })
+                    });
+
+                    if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
+                    
+                    localStorage.setItem('skuscale_id_submitted', 'true');
+                    step1.style.display = 'none';
+                    step2.style.display = 'block';
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    alert('There was an error submitting your ID. Please try again.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit ID';
+                }
+            });
+        };
+
+        // Lógica principal que se ejecuta al cargar la página
+        const main = async () => {
+            const client = await configureClient();
+            if (!client) return; // Si Auth0 falla, no hacemos nada
+
+            const query = window.location.search;
+
+            // CASO 1: La URL es una redirección de Auth0 (contiene code= y state=)
+            if (query.includes("code=") && query.includes("state=")) {
+                try {
+                    await client.handleRedirectCallback();
+                    // Limpiamos la URL para quitar los códigos y que no se procese de nuevo al recargar
+                    window.history.replaceState({}, document.title, "/dashboard.html");
+                    // Ahora que la sesión está establecida, renderizamos el dashboard
+                    await renderDashboard(client);
+                } catch (e) {
+                    console.error("Error procesando el callback de Auth0:", e);
+                    client.logout(); // Si falla, cerramos sesión para evitar bucles
+                }
+            // CASO 2: La URL está limpia, comprobamos si ya existe una sesión
+            } else {
+                const isAuthenticated = await client.isAuthenticated();
+                if (isAuthenticated) {
+                    // Si ya hay sesión, renderizamos el dashboard directamente
+                    await renderDashboard(client);
+                } else {
+                    // Si no hay sesión y no hay códigos en la URL, este usuario no debería estar aquí. Lo expulsamos.
+                    window.location.href = '/';
+                }
+            }
+        };
+
+        main();
+    </script>
 </body>
 </html>
+
