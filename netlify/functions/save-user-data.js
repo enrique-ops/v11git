@@ -1,49 +1,86 @@
-const fetch = require('node-fetch');
+// Importamos las librerías necesarias
+const { ManagementClient } = require('auth0');
+const { expressjwt: jwt } = require('express-jwt');
+const jwks = require('jwks-rsa');
 
+// Configuración de Auth0 (¡IMPORTANTE!)
+// Debes añadir estas variables al entorno de Netlify
+const auth0Domain = process.env.AUTH0_DOMAIN;
+const auth0Audience = process.env.AUTH0_AUDIENCE; // Generalmente 'https://tu-dominio.auth0.com/api/v2/'
+const auth0ClientId = process.env.AUTH0_CLIENT_ID;
+const auth0ClientSecret = process.env.AUTH0_CLIENT_SECRET;
+const auth0ManagementToken = process.env.AUTH0_MANAGEMENT_TOKEN; // Token de la API de Auth0
+
+// Middleware para validar el token JWT de Auth0
+const checkJwt = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `https://${auth0Domain}/.well-known/jwks.json`
+  } ),
+  audience: auth0Audience,
+  issuer: `https://${auth0Domain}/`,
+  algorithms: ['RS256']
+} );
+
+// El handler principal de la función
 exports.handler = async (event, context) => {
-  // ESTA PARTE ES LA CLAVE DE LA SEGURIDAD
-  // El 'context.clientContext.user' solo existe si Netlify ha podido
-  // verificar el token JWT que le hemos enviado en la cabecera.
-  // Aunque el plugin no esté, Netlify sigue haciendo una validación básica.
-  if (!context.clientContext || !context.clientContext.user) {
-    console.error('Llamada no autorizada. No hay contexto de usuario.');
-    return { 
-      statusCode: 401, 
-      body: JSON.stringify({ message: 'No autorizado. Debes estar logueado.' }) 
+  // 1. Verificación del método HTTP
+  if (event.httpMethod !== 'POST' ) {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
+
+  // 2. Verificación del Token (Simulada, ya que Netlify no soporta middleware directamente)
+  // En un entorno Express real, usarías `checkJwt` como middleware.
+  // Aquí, tenemos que simularlo o, para simplificar, confiar en el `context.clientContext` si está bien configurado.
+  // PERO, la forma más robusta es validar el token que nos llega en el header.
+  
+  // La forma más simple y segura en Netlify Functions es usar el `context.clientContext`
+  // que Netlify ya ha validado por nosotros si configuramos la integración con Auth0.
+  const { user } = context.clientContext;
+  if (!user) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ message: 'Unauthorized: No user context found.' })
     };
   }
 
-  // Si llegamos aquí, el usuario es válido.
-  const user = context.clientContext.user;
+  // 3. Procesar los datos
   const { adsId } = JSON.parse(event.body);
+  if (!adsId) {
+    return { statusCode: 400, body: JSON.stringify({ message: 'Google Ads ID is required.' }) };
+  }
 
-  console.log(`ID de Ads recibido: ${adsId} para el usuario ${user.email}`);
+  // El 'sub' es el ID único del usuario en Auth0 (ej: 'auth0|xxxxxxxx')
+  const userId = user.sub;
 
-  // Preparamos los datos para el webhook
-  const webhookData = {
-    event: 'id_submitted',
-    auth0_id: user.sub, // El ID de Auth0
-    email: user.email,
-    google_ads_id: adsId,
-    submission_date: new Date().toISOString()
-  };
+  // 4. Inicializar el Cliente de Gestión de Auth0
+  // Esto es para guardar el adsId en los metadatos del usuario en Auth0
+  const auth0 = new ManagementClient({
+    domain: auth0Domain,
+    clientId: auth0ClientId,
+    clientSecret: auth0ClientSecret,
+  });
 
-  // Enviamos los webhooks a Make/n8n
-  const webhookUrls = [process.env.MAKE_WEBHOOK_URL, process.env.N8N_WEBHOOK_URL].filter(Boolean);
-  await Promise.allSettled(
-    webhookUrls.map(url =>
-      fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(webhookData)
-      })
-    )
-  );
+  // 5. Guardar el adsId en los 'user_metadata' del usuario
+  try {
+    await auth0.users.update({ id: userId }, {
+      user_metadata: {
+        google_ads_id: adsId
+      }
+    });
 
-  console.log(`Webhooks de 'id_submitted' enviados para ${user.email}.`);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Google Ads ID saved successfully.' })
+    };
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ message: 'ID recibido correctamente!' })
-  };
+  } catch (error) {
+    console.error('Error updating user metadata in Auth0:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Failed to save Google Ads ID.' })
+    };
+  }
 };
