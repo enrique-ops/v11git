@@ -86,60 +86,92 @@
 
     <footer class="bg-gray-800 text-white py-8"><div class="container mx-auto px-6 text-center"><p>&copy; 2025 SKUscale. All rights reserved.</p></div></footer>
     
-    <script>
+
+<script>
+
         // --- 1. LANGUAGE SWITCHER (Sin cambios) ---
         // ... tu código de cambio de idioma ...
 
         // --- 2. LÓGICA DE AUTENTICACIÓN CON AUTH0 (CORREGIDA) ---
-        let auth0Client = null;
+    let auth0Client = null;
 
-        const configureClient = async () => {
-            try {
-                auth0Client = await auth0.createAuth0Client({
-                    // USA EL DOMINIO DE TU APLICACIÓN DE AUTH0
-                    domain: "nml.eu.auth0.com",
-                    // USA EL CLIENT ID DE TU APLICACIÓN DE AUTH0 (NO EL DE GOOGLE)
-                    clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
-                });
-            } catch (e) {
-                console.error("Error al configurar Auth0:", e);
-            }
-        };
-
-        const login = async () => {
-            if (!auth0Client) {
-                console.error("Auth0 client no está inicializado.");
-                return;
-            }
-            await auth0Client.loginWithRedirect({
-                authorizationParams: {
-                    redirect_uri: window.location.origin + '/dashboard.html',
-                    connection: 'google-oauth2' 
-                }
+    const configureClient = async () => {
+        try {
+            auth0Client = await auth0.createAuth0Client({
+                domain: "TU_DOMINIO_DE_AUTH0", // <-- USA TU DOMINIO REAL
+                clientId: "TU_CLIENT_ID_DE_AUTH0" // <-- USA TU CLIENT ID REAL
             });
-        };
+            return auth0Client;
+        } catch (e) {
+            console.error("Error al configurar Auth0:", e);
+            return null;
+        }
+    };
 
-        document.querySelectorAll('.login-trigger').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.preventDefault();
-                login();
+    const initializeDashboard = async (client) => {
+        // Obtenemos los datos del usuario de Auth0.
+        const user = await client.getUser();
+
+        // Rellenamos la UI con los datos del usuario
+        const userMenuContainer = document.getElementById('user-menu-container');
+        const userNameDisplay = document.getElementById('user-name');
+        const userEmailDisplay = document.getElementById('user-email');
+        const logoutButton = document.getElementById('logout-button');
+        const welcomeName = document.getElementById('welcome-name');
+        
+        const fullName = user.name || user.email.split('@')[0];
+        if (userNameDisplay) userNameDisplay.textContent = fullName;
+        if (userEmailDisplay) userEmailDisplay.textContent = user.email;
+        if (welcomeName) welcomeName.textContent = fullName;
+        if (userMenuContainer) userMenuContainer.classList.remove('hidden');
+
+        // Lógica del menú y logout
+        document.getElementById('user-menu-button')?.addEventListener('click', () => document.getElementById('user-menu').classList.toggle('hidden'));
+        logoutButton?.addEventListener('click', () => {
+            client.logout({
+                logoutParams: { returnTo: window.location.origin }
             });
         });
 
-        window.onload = async () => {
-            await configureClient();
-            const isAuthenticated = await auth0Client.isAuthenticated();
+        // Lógica del formulario de Onboarding (sin cambios)
+        // ... (el resto de tu lógica de formulario que ya funcionaba)
+    };
+
+    // ESTA ES LA LÓGICA PRINCIPAL QUE SE EJECUTA AL CARGAR LA PÁGINA
+    window.onload = async () => {
+        const client = await configureClient();
+        if (!client) {
+            console.error("Auth0 no se pudo inicializar. Abortando.");
+            return;
+        }
+
+        const query = window.location.search;
+
+        // CASO 1: La URL contiene los códigos de Auth0.
+        if (query.includes("code=") && query.includes("state=")) {
+            try {
+                await client.handleRedirectCallback();
+                // Limpiamos la URL para quitar los códigos y recargamos la página en su estado "limpio".
+                window.history.replaceState({}, document.title, "/dashboard.html");
+                // Una vez limpia la URL, inicializamos el dashboard.
+                await initializeDashboard(client);
+            } catch (e) {
+                console.error("Error en handleRedirectCallback:", e);
+                window.location.href = '/'; // Si falla, lo mandamos a la home.
+            }
+        // CASO 2: La URL está limpia, pero necesitamos verificar si el usuario está logueado.
+        } else {
+            const isAuthenticated = await client.isAuthenticated();
             if (isAuthenticated) {
-                window.location.href = '/dashboard.html';
-                return;
+                // Si está autenticado, mostramos el dashboard.
+                await initializeDashboard(client);
+            } else {
+                // Si no está autenticado y la URL está limpia, no debería estar aquí. Lo expulsamos.
+                window.location.href = '/';
             }
-            const query = window.location.search;
-            if (query.includes("code=") && query.includes("state=")) {
-                await auth0Client.handleRedirectCallback();
-                window.history.replaceState({}, document.title, "/");
-                window.location.href = '/dashboard.html';
-            }
-        };
-    </script>
+        }
+    };
+</script>
+
 </body>
 </html>
