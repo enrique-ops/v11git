@@ -4,5 +4,8 @@
   "description": "Webhook-only backend for SKUscale",
   "dependencies": {
     "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "@netlify/plugin-jwt-auth": "^2.0.0"
   }
 }
