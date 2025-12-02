@@ -80,8 +80,27 @@
                 <p class="mt-2 text-lg text-gray-600" data-lang="en">Your first classification is on us. See the value for yourself, then subscribe to stay ahead.</p>
                 <p class="mt-2 text-lg text-gray-600" data-lang="es" style="display:none;">Tu primera clasificación corre de nuestra cuenta. Comprueba el valor por ti mismo y luego suscríbete para mantener la ventaja.</p>
             </div>
-            <div class="flex flex-col lg:flex-row justify-center items-center gap-8">
-                <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md lg:max-w-sm"><h4 class="text-2xl font-bold text-gray-900">FREE</h4><p class="text-5xl font-extrabold my-4">$0</p><p class="h-24 text-gray-600" data-lang="en">A one-time, complete classification of your entire product catalog. Find your Winners, Losers, and hidden opportunities.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Una clasificación completa, por única vez, de todo tu catálogo. Encuentra tus Ganadores, Perdedores y oportunidades ocultas.</p><div class="mt-8"><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="en">Start for Free</button><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="es" style="display:none;">Empieza Gratis</button></div></div>
+           
+
+<div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md lg:max-w-sm">
+    <h4 class="text-2xl font-bold text-gray-900">FREE</h4>
+    
+    <!-- ANTES: <p class="text-5xl font-extrabold my-4">$0</p> -->
+    <!-- AHORA: Se añaden los <span> con data-lang para que el script los reconozca -->
+    <p class="text-5xl font-extrabold my-4">
+        <span data-lang="en">$0</span>
+        <span data-lang="es" style="display:none;">0€</span>
+    </p>
+    
+    <p class="h-24 text-gray-600" data-lang="en">A one-time, complete classification of your entire product catalog. Find your Winners, Losers, and hidden opportunities.</p>
+    <p class="h-24 text-gray-600" data-lang="es" style="display:none;">Una clasificación completa, por única vez, de todo tu catálogo. Encuentra tus Ganadores, Perdedores y oportunidades ocultas.</p>
+    
+    <div class="mt-8">
+        <button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="en">Start for Free</button>
+        <button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="es" style="display:none;">Empieza Gratis</button>
+    </div>
+</div>
+
                 <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md relative recommended-plan"><span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang="en">Most Popular</span><span class="absolute top-0 -translate-y-1/2 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase" data-lang="es" style="display:none;">Más Popular</span><h4 class="text-2xl font-bold text-indigo-600">GROWTH</h4><p class="text-5xl font-extrabold my-4"><span data-lang="en">$100</span><span data-lang="es" style="display:none;">100€</span><span class="text-base font-medium text-gray-500">/mo</span></p><p class="h-24 text-gray-600" data-lang="en">Perfect for hands-on teams. Get automated weekly classifications to continuously optimize your ad spend and strategy.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Perfecto para equipos autónomos. Recibe clasificaciones semanales automáticas para optimizar continuamente tu inversión y estrategia.</p><div class="mt-8"><button class="login-trigger w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang="en">Choose Growth</button><button class="login-trigger w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" data-lang="es" style="display:none;">Elegir Growth</button></div></div>
                 <div class="bg-white border border-gray-200 p-8 rounded-lg w-full max-w-md lg:max-w-sm"><h4 class="text-2xl font-bold text-gray-900">SCALE</h4><p class="text-5xl font-extrabold my-4"><span data-lang="en">$250</span><span data-lang="es" style="display:none;">250€</span><span class="text-base font-medium text-gray-500">/mo</span></p><p class="h-24 text-gray-600" data-lang="en">For teams who want expert guidance. Includes everything in Growth, plus a monthly 1-on-1 strategy call.</p><p class="h-24 text-gray-600" data-lang="es" style="display:none;">Para equipos que quieren un experto a su lado. Incluye todo Growth, más una llamada estratégica mensual.</p><div class="mt-8"><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="en">Choose Scale</button><button class="login-trigger w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-black" data-lang="es" style="display:none;">Elegir Scale</button></div></div>
             </div>
@@ -123,81 +142,67 @@
         langEnBtn.addEventListener('click', () => setLanguage('en'));
         langEsBtn.addEventListener('click', () => setLanguage('es'));
 
-        // --- LÓGICA DE AUTENTICACIÓN CON AUTH0 (Versión final) ---
-        let auth0Client = null;
+      // --- LÓGICA DE AUTENTICACIÓN CON AUTH0 (SIMPLIFICADA) ---
+    let auth0Client = null;
 
-        // Función para configurar el cliente de Auth0 con tus credenciales
-        const configureClient = async () => {
-            try {
-                auth0Client = await auth0.createAuth0Client({
-                    domain: "nml.eu.auth0.com",
-                    clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
-                });
-                return auth0Client;
-            } catch (e) {
-                console.error("Error al inicializar Auth0:", e);
-                return null;
-            }
-        };
-
-        // Función para iniciar sesión, llamada por los botones
-        const login = async () => {
-            const client = await configureClient();
-            if (!client) {
-                alert("Servicio de autenticación no disponible. Inténtalo más tarde.");
-                return;
-            }
-            try {
-                await client.loginWithRedirect({
-                    authorizationParams: {
-                        redirect_uri: window.location.origin + '/dashboard.html'
-                    }
-                });
-            } catch (e) {
-                console.error("Error al redirigir para el login:", e);
-            }
-        };
-
-        // Asignamos la función de login a todos los botones con la clase 'login-trigger'
-        document.querySelectorAll('.login-trigger').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.preventDefault();
-                login();
+    // 1. Configuración del cliente de Auth0
+    const configureClient = async () => {
+        try {
+            auth0Client = await auth0.createAuth0Client({
+                domain: "nml.eu.auth0.com",
+                clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
             });
+            return true;
+        } catch (e) {
+            console.error("Error al inicializar Auth0:", e);
+            return false;
+        }
+    };
+
+    // 2. Función de login, simple y directa
+    const login = async () => {
+        if (!auth0Client) {
+            console.error("Auth0 client no está listo.");
+            alert("Servicio de autenticación no disponible. Recarga la página.");
+            return;
+        }
+        await auth0Client.loginWithRedirect({
+            authorizationParams: {
+                redirect_uri: window.location.origin + '/dashboard.html'
+            }
         });
+    };
 
-        // Función principal que se ejecuta al cargar la página
-        const main = async () => {
-            const client = await configureClient();
-            if (!client) return;
+    // 3. Asignamos la función de login a los botones
+    document.querySelectorAll('.login-trigger').forEach(el => {
+        el.addEventListener('click', (e) => {
+            e.preventDefault();
+            login();
+        });
+    });
 
-            const query = window.location.search;
+    // 4. Lógica que se ejecuta al cargar la página
+    window.addEventListener('load', async () => {
+        const isConfigured = await configureClient();
+        if (!isConfigured) return;
 
-            // CASO 1: La URL es una redirección de Auth0 (contiene 'code' y 'state')
-            // Esto ocurre si el usuario es redirigido a index.html en lugar de dashboard.html
-            if (query.includes("code=") && query.includes("state=")) {
-                try {
-                    await client.handleRedirectCallback();
-                    window.location.replace('/dashboard.html'); // Lo enviamos al dashboard
-                    return;
-                } catch (e) {
-                    console.error("Error en handleRedirectCallback:", e);
-                    window.location.replace('/'); // Si falla, a la home limpia
-                    return;
-                }
-            }
+        const query = window.location.search;
 
-            // CASO 2: La URL está limpia. Comprobamos si ya hay una sesión activa.
-            const isAuthenticated = await client.isAuthenticated();
-            if (isAuthenticated) {
-                // Si ya está logueado, lo mandamos directamente al dashboard.
-                window.location.href = '/dashboard.html';
-                return;
-            }
-        };
+        // Si la URL contiene los códigos, es un callback.
+        if (query.includes("code=") && query.includes("state=")) {
+            await auth0Client.handleRedirectCallback();
+            window.location.replace('/dashboard.html');
+            return;
+        }
 
-        // Ejecutamos la función principal al cargar la ventana.
-        main();
+        // Si no, comprobamos si ya hay una sesión.
+        const isAuthenticated = await auth0Client.isAuthenticated();
+        if (isAuthenticated) {
+            window.location.href = '/dashboard.html';
+        }
+        // Si no está autenticado y no es un callback, no hacemos nada.
+        // La página simplemente espera a que el usuario haga clic en un botón.
+    });
     </script>
 </body>
 </html>
