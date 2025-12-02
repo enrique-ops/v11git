@@ -8,63 +8,54 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style> body { font-family: 'Inter', sans-serif; } </style>
+    <!-- AHORA: Añadimos el SDK de Auth0 -->
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
 </head>
 <body class="bg-gray-100">
-    <!-- Header -->
+    <!-- Header (sin cambios en el HTML ) -->
     <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/"><img src="/skuscale-logo.svg" alt="SKUscale Logo" class="h-8"></a>
-            <div id="user-menu-container" class="relative hidden">
-                <button id="user-menu-button" class="flex items-center space-x-2">
-                    <span id="user-name" class="font-semibold text-gray-700"></span>
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div id="user-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50">
-                    <div class="px-4 py-2 text-sm text-gray-700 border-b">
-                        <p class="font-bold">Signed in as</p>
-                        <p id="user-email" class="truncate"></p>
-                    </div>
-                    <button id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log out</button>
-                </div>
-            </div>
-        </div>
+        <!-- ... tu código del header del dashboard ... -->
     </header>
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-12">
-        <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="welcome-name"></span>!</h2>
-        <p class="mt-2 text-lg text-gray-600">Let's get you set up. Just follow the steps below.</p>
-        <!-- Step 1: Submit Google Ads ID -->
-        <div id="step-1" class="mt-8 max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-            <div class="flex items-center mb-6">
-                <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
-                <h3 class="ml-4 text-xl font-bold text-gray-800">Submit your Google Ads ID</h3>
-            </div>
-            <p class="text-gray-600 mb-4">Please provide your 10-digit Google Ads Customer ID (e.g., 123-456-7890 ). We need this to request read-only access to your account's performance data.</p>
-            <form id="onboarding-form">
-                <label for="ads-id" class="block text-sm font-medium text-gray-700">Google Ads Customer ID</label>
-                <input type="text" id="ads-id" name="ads-id" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="XXX-XXX-XXXX" required>
-                <button type="submit" class="mt-6 w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400">Submit ID</button>
-            </form>
-        </div>
-        <!-- Step 2: Confirmation -->
-        <div id="step-2" class="hidden mt-8 max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
-            <div class="flex items-center mb-6">
-                <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div>
-                <h3 class="ml-4 text-xl font-bold text-gray-800">ID Received! What's Next?</h3>
-            </div>
-            <div class="space-y-4 text-gray-600">
-                <p>Thank you! We've received your Google Ads ID. Our system is now preparing to connect to your account.</p>
-                <p><b class="text-gray-800">Important:</b> This onboarding process involves a "human in the loop" to ensure everything is set up correctly. Within the next 24 hours, we will send a <b>read-only access request</b> to your Google Ads account from our Manager Account (MCC).</p>
-                <p>Please keep an eye on your email for the access request notification from Google and accept it. You can also check back here for status updates.</p>
-            </div>
-        </div>
-    </main>
-    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script>
-        function initializeDashboard( ) {
-            const currentUser = window.netlifyIdentity.currentUser();
-            if (!currentUser) { window.location.href = '/'; return; }
 
+    <!-- Main Content (sin cambios en el HTML) -->
+    <main class="container mx-auto px-6 py-12">
+        <!-- ... tu código del contenido principal del dashboard ... -->
+    </main>
+
+    <!-- ANTES: <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script> -->
+    <!-- AHORA: El script de Netlify Identity se ha eliminado. Toda la lógica está aquí abajo. -->
+
+    <script>
+        let auth0Client = null;
+
+        // Configuración del cliente de Auth0 (debe ser la misma que en index.html )
+        const configureClient = async () => {
+            try {
+                auth0Client = await auth0.createAuth0Client({
+                    domain: "https://nml.eu.auth0.com", // <-- CAMBIA ESTO
+                    clientId: "721863547670-3jae7d6k3gtmrs5j3bhhbqt5csa2k6ff.apps.googleusercontent.com" // <-- CAMBIA ESTO
+                });
+            } catch (e) {
+                console.error("Error al configurar Auth0:", e);
+            }
+        };
+
+        // Función principal que se ejecuta al cargar el dashboard
+        const initializeDashboard = async () => {
+            await configureClient();
+
+            // Verificamos si el usuario está autenticado. Si no, lo expulsamos.
+            const isAuthenticated = await auth0Client.isAuthenticated();
+            if (!isAuthenticated) {
+                // Lo mandamos a la página de inicio para que haga login.
+                window.location.href = '/';
+                return;
+            }
+
+            // Obtenemos los datos del usuario de Auth0.
+            const user = await auth0Client.getUser();
+
+            // --- AHORA: Rellenamos la UI con datos de Auth0 ---
             const userMenuContainer = document.getElementById('user-menu-container');
             const userMenuButton = document.getElementById('user-menu-button');
             const userMenu = document.getElementById('user-menu');
@@ -72,25 +63,34 @@
             const userEmailDisplay = document.getElementById('user-email');
             const logoutButton = document.getElementById('logout-button');
             const welcomeName = document.getElementById('welcome-name');
+            
+            const fullName = user.name || user.email.split('@')[0];
+            if (userNameDisplay) userNameDisplay.textContent = fullName;
+            if (userEmailDisplay) userEmailDisplay.textContent = user.email;
+            if (welcomeName) welcomeName.textContent = fullName;
+            if (userMenuContainer) userMenuContainer.classList.remove('hidden');
+
+            // Lógica del menú y logout
+            if (userMenuButton && userMenu) { userMenuButton.addEventListener('click', () => userMenu.classList.toggle('hidden')); }
+            if (logoutButton) { 
+                logoutButton.addEventListener('click', () => {
+                    auth0Client.logout({
+                        logoutParams: { returnTo: window.location.origin }
+                    });
+                });
+            }
+
+            // --- Lógica del formulario de Onboarding ---
             const step1 = document.getElementById('step-1');
             const step2 = document.getElementById('step-2');
             const onboardingForm = document.getElementById('onboarding-form');
             const adsIdInput = document.getElementById('ads-id');
 
-            const fullName = currentUser.user_metadata.full_name || currentUser.email.split('@')[0];
-            if (userNameDisplay) userNameDisplay.textContent = fullName;
-            if (userEmailDisplay) userEmailDisplay.textContent = currentUser.email;
-            if (welcomeName) welcomeName.textContent = fullName;
-            if (userMenuContainer) userMenuContainer.classList.remove('hidden');
-
+            // Comprobamos si el ID ya fue enviado (sin cambios)
             if (localStorage.getItem('skuscale_id_submitted') === 'true') {
                 if (step1) step1.style.display = 'none';
                 if (step2) step2.style.display = 'block';
             }
-
-            if (userMenuButton && userMenu) { userMenuButton.addEventListener('click', () => userMenu.classList.toggle('hidden')); }
-            if (logoutButton) { logoutButton.addEventListener('click', () => window.netlifyIdentity.logout()); }
-            window.netlifyIdentity.on('logout', () => { localStorage.removeItem('skuscale_id_submitted'); window.location.href = '/'; });
 
             if (onboardingForm) {
                 onboardingForm.addEventListener('submit', async (event) => {
@@ -99,18 +99,24 @@
                     if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Saving...'; }
 
                     const adsId = adsIdInput.value;
-                    const token = currentUser.token.access_token;
-
+                    
                     try {
+                        // AHORA: Obtenemos el token de acceso de Auth0 para autorizar la llamada.
+                        const token = await auth0Client.getTokenSilently();
+
                         const response = await fetch('/.netlify/functions/save-user-data', {
                             method: 'POST',
+                            // AHORA: El token se envía en la cabecera 'Authorization'.
                             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                             body: JSON.stringify({ adsId: adsId })
                         });
+
                         if (!response.ok) { throw new Error(`Server error: ${response.statusText}`); }
+                        
                         localStorage.setItem('skuscale_id_submitted', 'true');
                         if (step1) step1.style.display = 'none';
                         if (step2) step2.style.display = 'block';
+
                     } catch (error) {
                         console.error('Submission error:', error);
                         alert('There was an error submitting your ID. Please try again.');
@@ -118,51 +124,10 @@
                     }
                 });
             }
-        }
-        window.netlifyIdentity.on('init', user => { if (user) { initializeDashboard(); } else { window.netlifyIdentity.on('login', () => initializeDashboard()); } });
+        };
+
+        // Ejecutamos la función principal al cargar la ventana.
+        window.onload = initializeDashboard;
     </script>
-
-<!-- Dentro de tu archivo dashboard.html, añade este script al final, antes de </body> -->
-
-<script>
-  // Función para llamar a nuestro nuevo endpoint de backend
-  const registerUserOnFirstLogin = async (user) => {
-    try {
-      const response = await fetch('/.netlify/functions/register-user', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.token.access_token}`
-        }
-      });
-      if (!response.ok) {
-        console.error('Failed to register user on backend.');
-      }
-      const data = await response.json();
-      console.log('Backend registration response:', data.message);
-    } catch (error) {
-      console.error('Error calling registration function:', error);
-    }
-  };
-
-  // Escuchamos el evento 'init' de Netlify Identity
-  window.netlifyIdentity.on('init', user => {
-    if (user) {
-      // Comprobamos si es la primera vez que vemos a este usuario en esta sesión
-      const isFirstLogin = !sessionStorage.getItem('user_registered');
-
-      if (isFirstLogin) {
-        console.log('First login detected for:', user.email);
-        // Llamamos a la función de registro en el backend
-        registerUserOnFirstLogin(user);
-        // Marcamos al usuario como "ya registrado" en el almacenamiento de la sesión
-        // para no volver a llamarlo si el usuario refresca la página.
-        sessionStorage.setItem('user_registered', 'true');
-      } else {
-        console.log('Returning user:', user.email);
-      }
-    }
-  });
-</script>
-
 </body>
 </html>
