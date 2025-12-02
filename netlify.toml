@@ -1,29 +1,7 @@
-[build]
-  # Este es el comando que Netlify ejecutará para construir el sitio.
-  # Es crucial para que instale las dependencias del backend.
-  command = "npm install"
-  
-  # Este es el directorio donde Netlify buscará las funciones del backend.
-  functions = "netlify/functions/"
-  
-  # Este es el directorio que Netlify publicará como tu sitio web.
-  # Como tu index.html está en la raíz, lo dejamos como está.
-  publish = "/"
-
-
 [functions]
-  external_node_modules = ["axios"] # Si usas axios en alguna función
   node_bundler = "esbuild"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# AÑADE ESTA SECCIÓN PARA VALIDAR TOKENS DE AUTH0
-[[plugins]]
-  package = "@netlify/plugin-jwt-auth"
-  [plugins.inputs]
-    [plugins.inputs.auth0]
-      domain = "nml.eu.auth0.com" # <-- TU DOMINIO DE AUTH0
-      audience = "https://nml.eu.auth0.com/api/v2/" # <-- TU AUDIENCE DE AUTH0 API
