@@ -70,6 +70,10 @@
 
         // 2. Función que renderiza el contenido del dashboard una vez autenticado
         const renderDashboard = (user) => {
+            if (!user) {
+                console.error("renderDashboard fue llamada sin un usuario.");
+                return;
+            }
             // Rellenar datos del usuario
             document.getElementById('user-name').textContent = user.name || user.email;
             document.getElementById('user-email').textContent = user.email;
@@ -90,7 +94,7 @@
             // Lógica del formulario de onboarding
             const onboardingForm = document.getElementById('onboarding-form');
             onboardingForm.addEventListener('submit', async (event) => {
-                event.preventDefault(); // Previene la recarga de la página
+                event.preventDefault();
                 const submitButton = onboardingForm.querySelector('button[type="submit"]');
                 submitButton.disabled = true;
                 submitButton.textContent = 'Saving...';
@@ -100,18 +104,14 @@
                     const name = user.name;
                     const email = user.email;
 
-                    // Llamada a la función de Netlify simple
                     const response = await fetch('/.netlify/functions/submit-onboarding', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name, email, adsId })
                     });
 
-                    if (!response.ok) {
-                        throw new Error('Server returned an error: ' + response.statusText);
-                    }
+                    if (!response.ok) throw new Error('Server returned an error: ' + response.statusText);
                     
-                    // Si todo va bien, mostramos el paso 2
                     localStorage.setItem('skuscale_id_submitted', 'true');
                     document.getElementById('step-1').style.display = 'none';
                     document.getElementById('step-2').style.display = 'block';
@@ -124,7 +124,6 @@
                 }
             });
 
-            // Comprobar si el formulario ya se había enviado
             if (localStorage.getItem('skuscale_id_submitted') === 'true') {
                 document.getElementById('step-1').style.display = 'none';
                 document.getElementById('step-2').style.display = 'block';
@@ -136,26 +135,27 @@
             try {
                 const auth0Client = await auth0ClientPromise;
                 
-                // Si la URL es un callback de Auth0, la procesamos
                 if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
                     await auth0Client.handleRedirectCallback();
-                    window.location.replace('/dashboard.html'); // Limpiamos la URL
+                    window.location.replace('/dashboard.html');
                     return;
                 }
 
-                // Comprobamos si el usuario está autenticado
                 const isAuthenticated = await auth0Client.isAuthenticated();
                 if (isAuthenticated) {
+                    // ¡¡¡AQUÍ ESTABA EL ERROR!!!
+                    // AHORA OBTENEMOS EL USUARIO Y SE LO PASAMOS A renderDashboard
                     const user = await auth0Client.getUser();
-                    renderDashboard(user); // Si lo está, renderizamos el dashboard
+                    renderDashboard(user);
                 } else {
-                    window.location.href = '/'; // Si no, lo expulsamos a la home
+                    window.location.href = '/';
                 }
             } catch(e) {
                 console.error("Error en el flujo del dashboard:", e);
-                window.location.href = '/'; // En caso de cualquier error, a la home
+                window.location.href = '/';
             }
         });
     </script>
 </body>
 </html>
+
