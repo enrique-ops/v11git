@@ -63,10 +63,15 @@
 
   <script>
     // 1. Configuración del cliente de Auth0 (sin cambios)
-    const auth0ClientPromise = auth0.createAuth0Client({
-        domain: "auth.skuscale.com",
-        clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
-    });
+  // La versión CORRECTA
+const auth0ClientPromise = auth0.createAuth0Client({
+    domain: "auth.skuscale.com",
+    clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a",
+    authorizationParams: {
+        redirect_uri: window.location.origin + '/dashboard.html'
+    }
+});
+
 
     // 2. Función renderDashboard (sin cambios)
     const renderDashboard = (user) => {
