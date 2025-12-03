@@ -87,7 +87,7 @@
     <footer class="bg-gray-800 text-white py-8"><div class="container mx-auto px-6 text-center"><p>&copy; 2025 SKUscale. All rights reserved.</p></div></footer>
     
     <script>
-        // --- LÓGICA DE CAMBIO DE IDIOMA (Sin cambios) ---
+        // --- LÓGICA DE CAMBIO DE IDIOMA ---
         const langEnBtn = document.getElementById('lang-en');
         const langEsBtn = document.getElementById('lang-es');
         const elementsEn = document.querySelectorAll('[data-lang="en"]');
@@ -114,24 +114,18 @@
         langEnBtn.addEventListener('click', () => setLanguage('en'));
         langEsBtn.addEventListener('click', () => setLanguage('es'));
 
-        // --- LÓGICA DE AUTENTICACIÓN CON AUTH0 (VERSIÓN FINAL Y ROBUSTA) ---
+        // --- LÓGICA DE AUTENTICACIÓN (VERSIÓN FINAL Y ROBUSTA) ---
         
-        // 1. Creamos una "promesa" para el cliente de Auth0.
-        // Esto empieza a configurar Auth0 inmediatamente cuando se carga el script,
-        // sin esperar a que toda la página (imágenes, etc.) se cargue.
+        // 1. Configuración del cliente de Auth0. Se inicia inmediatamente.
         const auth0ClientPromise = auth0.createAuth0Client({
             domain: "nml.eu.auth0.com",
             clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
         });
 
-        // 2. Función de login: ahora es más inteligente.
+        // 2. Función de login. Espera a que el cliente esté listo antes de actuar.
         const login = async () => {
             try {
-                // Espera a que la promesa de configuración se resuelva.
-                // Si ya está resuelta, esto es instantáneo.
                 const auth0Client = await auth0ClientPromise;
-                
-                // Inicia el login.
                 await auth0Client.loginWithRedirect({
                     authorizationParams: {
                         redirect_uri: window.location.origin + '/dashboard.html'
@@ -145,20 +139,16 @@
 
         // 3. Asignamos la función de login a los botones.
         document.querySelectorAll('.login-trigger').forEach(el => {
-            el.addEventListener('click', (e) => {
-                e.preventDefault();
-                login();
-            });
+            el.addEventListener('click', login);
         });
 
-        // 4. Lógica principal que se ejecuta tan pronto como el DOM está listo.
+        // 4. Lógica principal que se ejecuta al cargar la página.
         window.addEventListener('DOMContentLoaded', async () => {
             try {
                 const auth0Client = await auth0ClientPromise;
-                const query = window.location.search;
-
+                
                 // Si la URL es un callback de Auth0, la procesamos.
-                if (query.includes("code=") && query.includes("state=")) {
+                if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
                     await auth0Client.handleRedirectCallback();
                     window.location.replace('/dashboard.html');
                     return;
@@ -167,6 +157,7 @@
                 // Si no es un callback, comprobamos si ya hay una sesión.
                 const isAuthenticated = await auth0Client.isAuthenticated();
                 if (isAuthenticated) {
+                    // Si el usuario ya está logueado, lo mandamos directamente al dashboard.
                     window.location.href = '/dashboard.html';
                 }
                 // Si no está autenticado, no hacemos nada. La página espera la interacción del usuario.
