@@ -112,35 +112,44 @@
                 step2.style.display = 'block';
             }
 
-            onboardingForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const submitButton = onboardingForm.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.textContent = 'Saving...';
+// Dentro del script de dashboard.html, busca el addEventListener del onboardingForm
 
-                try {
-                    const adsId = document.getElementById('ads-id').value;
-                    const token = await client.getTokenSilently(); // Obtiene el token de forma segura
+onboardingForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const submitButton = onboardingForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Saving...';
 
-                    const response = await fetch('/.netlify/functions/save-user-data', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify({ adsId: adsId })
-                    });
+    try {
+        // 1. Recogemos los datos que ya tenemos en la página
+        const adsId = document.getElementById('ads-id').value;
+        const name = document.getElementById('user-name').textContent;
+        const email = document.getElementById('user-email').textContent;
 
-                    if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
-                    
-                    localStorage.setItem('skuscale_id_submitted', 'true');
-                    step1.style.display = 'none';
-                    step2.style.display = 'block';
-                } catch (error) {
-                    console.error('Submission error:', error);
-                    alert('There was an error submitting your ID. Please try again.');
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Submit ID';
-                }
-            });
-        };
+        // 2. Llamamos a nuestra NUEVA y simple función
+        const response = await fetch('/.netlify/functions/submit-onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            // 3. Enviamos un JSON simple con los tres datos
+            body: JSON.stringify({ name, email, adsId })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.statusText}`);
+        }
+        
+        // Si todo va bien, mostramos el paso 2
+        localStorage.setItem('skuscale_id_submitted', 'true');
+        step1.style.display = 'none';
+        step2.style.display = 'block';
+
+    } catch (error) {
+        console.error('Submission error:', error);
+        alert('There was an error submitting your ID. Please try again.');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit ID';
+    }
+});
 
         // Lógica principal que se ejecuta al cargar la página
         const main = async () => {
