@@ -73,9 +73,71 @@ const auth0ClientPromise = auth0.createAuth0Client({
 });
 
 
-    // 2. Función renderDashboard (sin cambios)
+      // 2. Función renderDashboard (AHORA CON EL CÓDIGO CORRECTO)
     const renderDashboard = (user) => {
-        // ... (el código de esta función no cambia)
+        if (!user) {
+            console.error("renderDashboard fue llamada sin un usuario. No se pintará nada.");
+            return;
+        }
+        console.log("Pintando datos para el usuario:", user.name);
+        
+        // Rellenar datos del usuario
+        document.getElementById('user-name').textContent = user.name || user.email;
+        document.getElementById('user-email').textContent = user.email;
+        document.getElementById('welcome-name').textContent = user.name || user.email.split('@')[0];
+        
+        // Mostramos el menú de usuario
+        document.getElementById('user-menu-container').classList.remove('hidden');
+
+        // Lógica del menú de usuario
+        document.getElementById('user-menu-button').addEventListener('click', () => {
+            document.getElementById('user-menu').classList.toggle('hidden');
+        });
+
+        // Lógica del botón de logout
+        document.getElementById('logout-button').addEventListener('click', async () => {
+            const auth0Client = await auth0ClientPromise;
+            auth0Client.logout({ logoutParams: { returnTo: window.location.origin } });
+        });
+
+        // Lógica del formulario de onboarding (YA LA TIENES, PERO LA INCLUYO POR COMPLETITUD)
+        const onboardingForm = document.getElementById('onboarding-form');
+        onboardingForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const submitButton = onboardingForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
+
+            try {
+                const adsId = document.getElementById('ads-id').value;
+                const name = user.name;
+                const email = user.email;
+
+                const response = await fetch('/.netlify/functions/submit-onboarding', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, adsId })
+                });
+
+                if (!response.ok) throw new Error('Server returned an error: ' + response.statusText);
+                
+                localStorage.setItem('skuscale_id_submitted', 'true');
+                document.getElementById('step-1').style.display = 'none';
+                document.getElementById('step-2').style.display = 'block';
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('There was an error submitting your ID. Please try again.');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit ID';
+            }
+        });
+
+        // Comprobar si el formulario ya se había enviado
+        if (localStorage.getItem('skuscale_id_submitted') === 'true') {
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+        }
     };
 
     // 3. Lógica principal con la "CAJA NEGRA" de diagnóstico
