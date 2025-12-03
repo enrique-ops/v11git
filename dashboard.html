@@ -13,6 +13,8 @@
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
 </head>
 <body class="bg-gray-100">
+
+
     <!-- Header -->
     <header class="bg-white shadow-sm">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -63,93 +65,80 @@
         </div>
     </main>
 
-    <!-- 2. EL SCRIPT COMPLETO Y CORRECTO PARA EL DASHBOARD -->
+
     <script>
-        let auth0Client = null;
+        const auth0ClientPromise = auth0.createAuth0Client({
+            domain: "nml.eu.auth0.com",
+            clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
+        });
 
-        // Función para configurar el cliente de Auth0
-        const configureClient = async () => {
-            try {
-    auth0Client = await auth0.createAuth0Client({
-    domain: "nml.eu.auth0.com", // O tu dominio personalizado si ya lo usas
-    clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a",
-    authorizationParams: {
-      audience: "https://nml.eu.auth0.com/api/v2/" // <-- ¡ESTA ES LA LÍNEA CLAVE!
-    }
-} );
-                return auth0Client;
-            } catch (e) {
-                console.error("Error al configurar Auth0 en el dashboard:", e);
-                return null;
-            }
-        };
-
-        // Función que se ejecuta una vez que sabemos que el usuario está autenticado
-        const renderDashboard = async (client) => {
-            const user = await client.getUser();
-            
-            // Rellenar la UI con datos del usuario
+        const renderDashboard = (user) => {
             document.getElementById('user-name').textContent = user.name || user.email;
             document.getElementById('user-email').textContent = user.email;
             document.getElementById('welcome-name').textContent = user.name || user.email.split('@')[0];
             document.getElementById('user-menu-container').classList.remove('hidden');
 
-            // Lógica del menú y logout
-            document.getElementById('user-menu-button').addEventListener('click', () => document.getElementById('user-menu').classList.toggle('hidden'));
-            document.getElementById('logout-button').addEventListener('click', () => {
-                client.logout({
-                    logoutParams: { returnTo: window.location.origin }
-                });
+            document.getElementById('logout-button').addEventListener('click', async () => {
+                const auth0Client = await auth0ClientPromise;
+                auth0Client.logout({ logoutParams: { returnTo: window.location.origin } });
             });
 
-            // Lógica del formulario (la que ya tenías)
-            const step1 = document.getElementById('step-1');
-            const step2 = document.getElementById('step-2');
             const onboardingForm = document.getElementById('onboarding-form');
+            onboardingForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Previene la recarga de la página
+                const submitButton = onboardingForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Saving...';
 
-            if (localStorage.getItem('skuscale_id_submitted') === 'true') {
-                step1.style.display = 'none';
-                step2.style.display = 'block';
+                try {
+                    const adsId = document.getElementById('ads-id').value;
+                    const name = user.name;
+                    const email = user.email;
+
+                    const response = await fetch('/.netlify/functions/submit-onboarding', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, adsId })
+                    });
+
+                    if (!response.ok) throw new Error('Server returned an error');
+                    
+                    localStorage.setItem('skuscale_id_submitted', 'true');
+                    document.getElementById('step-1').style.display = 'none';
+                    document.getElementById('step-2').style.display = 'block';
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    alert('There was an error submitting your ID. Please try again.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit ID';
+                }
+            });
+        };
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const auth0Client = await auth0ClientPromise;
+                if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
+                    await auth0Client.handleRedirectCallback();
+                    window.location.replace('/dashboard.html');
+                    return;
+                }
+                const isAuthenticated = await auth0Client.isAuthenticated();
+                if (isAuthenticated) {
+                    const user = await auth0Client.getUser();
+                    renderDashboard(user);
+                } else {
+                    window.location.href = '/';
+                }
+            } catch(e) {
+                console.error("Error en dashboard:", e);
+                window.location.href = '/';
             }
-
-// Dentro del script de dashboard.html, busca el addEventListener del onboardingForm
-
-onboardingForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const submitButton = onboardingForm.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = 'Saving...';
-
-    try {
-        // 1. Recogemos los datos que ya tenemos en la página
-        const adsId = document.getElementById('ads-id').value;
-        const name = document.getElementById('user-name').textContent;
-        const email = document.getElementById('user-email').textContent;
-
-        // 2. Llamamos a nuestra NUEVA y simple función
-        const response = await fetch('/.netlify/functions/submit-onboarding', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            // 3. Enviamos un JSON simple con los tres datos
-            body: JSON.stringify({ name, email, adsId })
         });
+    </script>
 
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.statusText}`);
-        }
-        
-        // Si todo va bien, mostramos el paso 2
-        localStorage.setItem('skuscale_id_submitted', 'true');
-        step1.style.display = 'none';
-        step2.style.display = 'block';
 
-    } catch (error) {
-        console.error('Submission error:', error);
-        alert('There was an error submitting your ID. Please try again.');
-        submitButton.disabled = false;
-        submitButton.textContent = 'Submit ID';
-    }
-});
+
 
         // Lógica principal que se ejecuta al cargar la página
         const main = async () => {
