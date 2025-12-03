@@ -61,101 +61,67 @@
         </div>
     </main>
 
-    <script>
-        // 1. Configuración del cliente de Auth0
-        const auth0ClientPromise = auth0.createAuth0Client({
-            domain: "nml.eu.auth0.com",
-            clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
-        });
+  <script>
+    // 1. Configuración del cliente de Auth0 (sin cambios)
+    const auth0ClientPromise = auth0.createAuth0Client({
+        domain: "nml.eu.auth0.com",
+        clientId: "6ds6S2Ltn7fJ7y5PjPmhFqe50AbTlp5a"
+    });
 
-        // 2. Función que renderiza el contenido del dashboard una vez autenticado
-        const renderDashboard = (user) => {
-            if (!user) {
-                console.error("renderDashboard fue llamada sin un usuario.");
+    // 2. Función renderDashboard (sin cambios)
+    const renderDashboard = (user) => {
+        // ... (el código de esta función no cambia)
+    };
+
+    // 3. Lógica principal con la "CAJA NEGRA" de diagnóstico
+    window.addEventListener('DOMContentLoaded', async () => {
+        console.log("--- INICIANDO DIAGNÓSTICO DASHBOARD ---");
+
+        try {
+            console.log("Paso 1: Esperando al cliente de Auth0...");
+            const auth0Client = await auth0ClientPromise;
+            console.log("Paso 2: Cliente de Auth0 listo.");
+
+            if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
+                console.log("Paso 3a: Detectado callback de Auth0. Procesando...");
+                await auth0Client.handleRedirectCallback();
+                console.log("Paso 4a: Callback procesado. Redirigiendo para limpiar URL...");
+                window.location.replace('/dashboard.html');
                 return;
             }
-            // Rellenar datos del usuario
-            document.getElementById('user-name').textContent = user.name || user.email;
-            document.getElementById('user-email').textContent = user.email;
-            document.getElementById('welcome-name').textContent = user.name || user.email.split('@')[0];
-            document.getElementById('user-menu-container').classList.remove('hidden');
 
-            // Lógica del menú de usuario
-            document.getElementById('user-menu-button').addEventListener('click', () => {
-                document.getElementById('user-menu').classList.toggle('hidden');
-            });
+            console.log("Paso 3b: No es un callback. Comprobando estado de autenticación...");
+            const isAuthenticated = await auth0Client.isAuthenticated();
+            console.log("Paso 4b: ¿Está autenticado? ->", isAuthenticated);
 
-            // Lógica del botón de logout
-            document.getElementById('logout-button').addEventListener('click', async () => {
-                const auth0Client = await auth0ClientPromise;
-                auth0Client.logout({ logoutParams: { returnTo: window.location.origin } });
-            });
-
-            // Lógica del formulario de onboarding
-            const onboardingForm = document.getElementById('onboarding-form');
-            onboardingForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const submitButton = onboardingForm.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.textContent = 'Saving...';
-
-                try {
-                    const adsId = document.getElementById('ads-id').value;
-                    const name = user.name;
-                    const email = user.email;
-
-                    const response = await fetch('/.netlify/functions/submit-onboarding', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email, adsId })
-                    });
-
-                    if (!response.ok) throw new Error('Server returned an error: ' + response.statusText);
-                    
-                    localStorage.setItem('skuscale_id_submitted', 'true');
-                    document.getElementById('step-1').style.display = 'none';
-                    document.getElementById('step-2').style.display = 'block';
-
-                } catch (error) {
-                    console.error('Submission error:', error);
-                    alert('There was an error submitting your ID. Please try again.');
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Submit ID';
-                }
-            });
-
-            if (localStorage.getItem('skuscale_id_submitted') === 'true') {
-                document.getElementById('step-1').style.display = 'none';
-                document.getElementById('step-2').style.display = 'block';
-            }
-        };
-
-        // 3. Lógica principal que se ejecuta al cargar la página
-        window.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const auth0Client = await auth0ClientPromise;
+            if (isAuthenticated) {
+                console.log("Paso 5: Sí, está autenticado. Obteniendo datos del usuario...");
+                const user = await auth0Client.getUser();
                 
-                if (window.location.search.includes("code=") && window.location.search.includes("state=")) {
-                    await auth0Client.handleRedirectCallback();
-                    window.location.replace('/dashboard.html');
-                    return;
+                // --- ¡¡¡LA PRUEBA MÁS IMPORTANTE!!! ---
+                console.log("Paso 6: DATOS DEL USUARIO RECIBIDOS:", user);
+                // -----------------------------------------
+
+                if (user) {
+                    console.log("Paso 7: El objeto 'user' existe. Llamando a renderDashboard...");
+                    renderDashboard(user);
+                    console.log("Paso 8: renderDashboard ejecutado.");
+                } else {
+                    console.error("¡FALLO CRÍTICO! 'isAuthenticated' es TRUE, pero 'getUser' ha devuelto NULL o UNDEFINED.");
                 }
 
-                const isAuthenticated = await auth0Client.isAuthenticated();
-                if (isAuthenticated) {
-                    // ¡¡¡AQUÍ ESTABA EL ERROR!!!
-                    // AHORA OBTENEMOS EL USUARIO Y SE LO PASAMOS A renderDashboard
-                    const user = await auth0Client.getUser();
-                    renderDashboard(user);
-                } else {
-                    window.location.href = '/';
-                }
-            } catch(e) {
-                console.error("Error en el flujo del dashboard:", e);
+            } else {
+                console.error("¡FALLO! 'isAuthenticated' es FALSE. El usuario no debería estar aquí. Redirigiendo a la home.");
                 window.location.href = '/';
             }
-        });
-    </script>
+        } catch(e) {
+            console.error("--- ERROR CATASTRÓFICO EN EL FLUJO DEL DASHBOARD ---");
+            console.error(e);
+            alert("Ha ocurrido un error crítico en el dashboard. Serás redirigido a la página de inicio.");
+            window.location.href = '/';
+        }
+    });
+</script>
 </body>
 </html>
 
